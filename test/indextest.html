@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Two Circles Horizontal Passing</title>
+  <style>
+    :root {
+      --blue: #0033cc;
+      --green: #00cc66;
+      --circle-size: 14.4878px;
+      --orbit-radius: 27px; /* khoảng cách ngang giữa 2 biên độ */
+    }
+
+    html, body {
+      height: 100%;
+      background: #fff;
+      margin: 0;
+    }
+
+    .demo-wrap {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loader {
+      position: relative;
+      width: calc(var(--orbit-radius) * 2 + var(--circle-size));
+      height: var(--circle-size);
+    }
+
+    .circle {
+      position: absolute;
+      width: var(--circle-size);
+      height: var(--circle-size);
+      border-radius: 50%;
+      top: 0;
+    }
+
+    .blue {
+      background-color: var(--blue);
+      animation: move-blue 1s linear infinite;
+    }
+
+    .green {
+      background-color: var(--green);
+      animation: move-green 1s linear infinite;
+    }
+
+    @keyframes move-blue {
+      0%   { left: 0; }
+      50%  { left: calc(var(--orbit-radius) * 2); }
+      100% { left: 0; }
+    }
+
+    @keyframes move-green {
+      0%   { left: calc(var(--orbit-radius) * 2); }
+      50%  { left: 0; }
+      100% { left: calc(var(--orbit-radius) * 2); }
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-wrap">
+    <div class="loader">
+      <div class="circle blue"></div>
+      <div class="circle green"></div>
+    </div>
+  </div>
+</body>
+</html>
