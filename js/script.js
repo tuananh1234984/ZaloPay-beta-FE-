@@ -5,6 +5,7 @@ const btnLimit = sections[2].querySelector('.x-c-nh-n-wrapper-1');
 const inputField = document.querySelector('.input-field');
 const nameCount = document.getElementById('nameCount');
 
+let isConfirmMode = false;
 btnPlay.onclick = function() {
     sections[0].classList.add('slide-out');
     setTimeout(() => {
@@ -27,12 +28,46 @@ btnNext.onclick = function() {
         inputField.focus();
         return;
     }
-    sections[1].classList.add('slide-out');
-    setTimeout(() => {
-        sections[1].style.display = 'none';
-        sections[2].style.display = 'block';
-        sections[2].classList.add('fade-in-up');
-    }, 500);
+    if (!isConfirmMode) {
+        sections[1].classList.add('slide-out');
+        setTimeout(() => {
+            sections[1].style.display = 'none';
+            sections[2].style.display = 'block';
+            sections[2].classList.add('fade-in-up');
+        }, 500);
+    }else {
+        sections[1].classList.add('slide-out');
+        setTimeout(() => {
+            sections[1].style.display = 'none';
+            sections[3].style.display = 'block';
+            sections[3].classList.add('fade-in-up');
+
+            const hammer = sections[3].querySelector(".artboard");
+            const box = sections[3].querySelector(".rectangle-2");
+            const nameDisplay = sections[3].querySelector(".text-wrapper-3");
+            nameDisplay.textContent = name;
+
+            setTimeout(() => {
+                hammer.classList.add('vector');
+                setTimeout(() => {
+                    box.classList.add('opened');
+                    nameDisplay.classList.add('show');
+
+                    setTimeout(() => {
+                        sections[3].classList.add('slide-out');
+                        setTimeout(() => {
+                            sections[3].style.display = 'none';
+                            sections[4].style.display = 'block';
+                            sections[4].classList.add('fade-in-up');
+
+                            // Cập nhật tên hiển thị trong kết quả
+                            sections[4].querySelector('.text-wrapper').textContent = name;
+                        }, 500);
+                    }, 2000);
+                }, 300);
+            }, 500);
+        }, 500);
+    }
 };
 
 //Giới hạn chọn tối đa 3 sticker + thêm dấu tích
@@ -121,30 +156,101 @@ btnNext.onclick = function() {
 
 
 btnLimit.onclick = function() {
-    const selectedStickers = inputField.value.trim();
-    if (selectedStickers < 3) {
-        alert('Vui lòng chọn ít nhất 3 sticker!');
+    if (document.querySelectorAll(".tick-icon").length < 3) {
+        alert('Vui lòng chọn đủ 3 sticker!');
         return;
-    }else {
-        sections[2].classList.add('slide-out');
-        setTimeout(() => {
-            sections[2].style.display = 'none';
-            sections[3].style.display = 'block';
-            sections[3].classList.add('fade-in-up');
-
-            const hammer = sections[3].querySelector(".artboard");
-            const box = sections[3].querySelector(".rectangle-2");
-            const nameDisplay = sections[3].querySelector(".text-wrapper-3");
-
-            nameDisplay.textContent = inputField.value.trim();
-
-            setTimeout(() => {
-                hammer.classList.add('.vector');
-                setTimeout(() => {
-                    box.classList.add('opened');
-                    nameDisplay.classList.add('show');
-                }, 300);
-            }, 500);
-        }, 500);
     }
+
+    // Quay lại slide nhập tên
+    sections[2].classList.add('slide-out');
+    setTimeout(() => {
+        sections[2].style.display = 'none';
+        sections[1].style.display = 'block';
+        sections[1].classList.add('fade-in-up');
+
+        // Đổi nút thành "XÁC NHẬN"
+        btnNext.querySelector('.x-c-nh-n').textContent = "XÁC NHẬN";
+        isConfirmMode = true;
+    }, 500);
+};
+
+
+function buildHeader(title) {
+    return `
+    <div class="header">
+        <button class="btn-close">←</button>
+        <span class="header-title">${title}</span>
+    </div>
+    `;
 }
+
+function showNoticeModal(callback) {
+    const modal = document.createElement("div");
+    modal.className = "popup-size";
+    modal.innerHTML = `
+        <div class="popup-box">
+            ${buildHeader("ZaloPay")}
+            <div class="popup-box">
+                <p>Chọn kích thước ảnh để đăng avatar/story và tải ảnh ngay</p>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    modal.querySelector(".btn-close").onclick = () => {
+        modal.remove();
+        callback();
+    };
+}
+
+function showSizePopup(callback) {
+    const popup = document.createElement("div");
+    popup.className = "popup-size";
+    popup.innerHTML = `
+        <div class="popup-box>
+            ${buildHeader("ZaloPay")}
+            <div class="popup-body">
+                <div class="popup-buttons">
+                    <button class="btn-size" data-ratio="1">1:1</button>
+                    <button class="btn-size" data-ratio="916">9:16</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(popup);
+
+    popup.querySelectorAll(".btn-size").forEach(btn => {
+        btn.onclick = () => {
+            const ratio = btn.dataset.ratio;
+            popup.remove();
+            callback(ratio);
+        };
+    });
+
+    popup.querySelector(".btn-close").onclick = () => {
+        popup.remove();
+    };
+}
+
+(function () {
+    const resultsection = section[4];
+    const menuItems = resultsection.querySelectorAll(".menu-item");
+
+    const btnDownLoad = menuItems[0];
+    //const btnRetry = menuItems[1];
+    //const btnshare = menuItems[2];
+
+    btnDownLoad.addEventListener("click", () =>  {
+        showNoticalModal(() => {
+            showSizePopup((ratio) => {
+                const resultDiv = resultsection.queryselectior(".div");
+                html2canvas(resultDiv, {scale: 2}).then((canvas) => {
+                    const link = document.createElement("a");
+                    link.download = ratio === "1" ? "avatar.png" : "story.png";
+                    link.href = canvas.toDataURL("image/png");
+                    link.click();
+                });
+            });
+        });
+    });
+});
