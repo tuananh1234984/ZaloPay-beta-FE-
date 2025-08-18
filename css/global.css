@@ -18,3 +18,9 @@ button:focus-visible {
 a {
     text-decoration: none;
 }
+
+@media (max-width: 768px) {
+    html, body {
+        overflow: hidden;
+    }
+}
