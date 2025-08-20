@@ -60,8 +60,8 @@ btnNext.onclick = function() {
                             sections[4].style.display = 'block';
                             sections[4].classList.add('fade-in-up');
 
-                            // Cập nhật tên hiển thị trong kết quả
-                            sections[4].querySelector('.text-wrapper').textContent = name;
+                            // Cập nhật tên và sticker đã chọn trong kết quả
+                            renderResult(name, selectedStickers);
                         }, 500);
                     }, 2000);
                 }, 300);
@@ -73,6 +73,8 @@ btnNext.onclick = function() {
 //Giới hạn chọn tối đa 3 sticker + thêm dấu tích
 /* ------------------ CHỌN STICKER TỐI ĐA 3 + DẤU TÍCH ------------------ */
 // Giới hạn chọn tối đa 3 sticker + thêm dấu tích riêng
+let selectedStickers = []; // Thêm biến lưu sticker đã chọn
+
 (function () {
     const grid = document.querySelector(".group-5");
     const stickers = grid.querySelectorAll("img");
@@ -150,6 +152,9 @@ btnNext.onclick = function() {
                 const shouldDisable = !selected.has(s.dataset.id) && selected.size >= MAX;
                 s.classList.toggle("sticker-disabled", shouldDisable);
             });
+
+            // Cập nhật biến selectedStickers mỗi lần chọn
+            selectedStickers = Array.from(selected).map(idx => stickers[idx].src);
         });
     });
 })();
@@ -160,6 +165,15 @@ btnLimit.onclick = function() {
         alert('Vui lòng chọn đủ 3 sticker!');
         return;
     }
+
+    // Cập nhật selectedStickers lần cuối (phòng trường hợp user chọn xong mới bấm)
+    const grid = document.querySelector(".group-5");
+    const stickers = grid.querySelectorAll("img");
+    const selected = Array.from(document.querySelectorAll(".tick-icon")).map(tick => {
+        // tick.dataset.for là index
+        return stickers[tick.dataset.for].src;
+    });
+    selectedStickers = selected;
 
     // Quay lại slide nhập tên
     sections[2].classList.add('slide-out');
@@ -175,82 +189,115 @@ btnLimit.onclick = function() {
 };
 
 
-function buildHeader(title) {
-    return `
-    <div class="header">
-        <button class="btn-close">←</button>
-        <span class="header-title">${title}</span>
-    </div>
-    `;
+// --- Xử lý tải ảnh: chỉ chọn size và chia sẻ, không tải về máy ---
+
+// Hàm render tên và sticker đã chọn ra slide kết quả
+function renderResult(name, stickers) {
+    const containers = [
+        document.querySelector('.kt-qu-phin-bn-mi'),
+        document.querySelector('.size'),
+        document.querySelector('.size-9-16')
+    ];
+    containers.forEach(container => {
+        if (!container) return;
+        const nameDiv = container.querySelector('.name-label');
+        if (nameDiv) nameDiv.innerText = name;
+
+        const stickerBox = container.querySelector('.sticker-box');
+        if (stickerBox) {
+            stickerBox.innerHTML = `
+                ${stickers[0] ? `<img class="icon" src="${stickers[0]}" alt="sticker">` : ''}
+                ${stickers[1] ? `<img class="img" src="${stickers[1]}" alt="sticker">` : ''}
+                ${stickers[2] ? `<img class="icon-2" src="${stickers[2]}" alt="sticker">` : ''}
+            `;
+        }
+    })
 }
+//
+document.addEventListener('DOMContentLoaded', function() {
+    const downloadBtn = document.getElementById('download-btn');
+    const sizeModal = document.getElementById('sizeModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const chooseSizeBtns = document.querySelector('.choose-size-btns');
 
-function showNoticeModal(callback) {
-    const modal = document.createElement("div");
-    modal.className = "popup-size";
-    modal.innerHTML = `
-        <div class="popup-box">
-            ${buildHeader("ZaloPay")}
-            <div class="popup-box">
-                <p>Chọn kích thước ảnh để đăng avatar/story và tải ảnh ngay</p>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
-
-    modal.querySelector(".btn-close").onclick = () => {
-        modal.remove();
-        callback();
-    };
-}
-
-function showSizePopup(callback) {
-    const popup = document.createElement("div");
-    popup.className = "popup-size";
-    popup.innerHTML = `
-        <div class="popup-box>
-            ${buildHeader("ZaloPay")}
-            <div class="popup-body">
-                <div class="popup-buttons">
-                    <button class="btn-size" data-ratio="1">1:1</button>
-                    <button class="btn-size" data-ratio="916">9:16</button>
-                </div>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(popup);
-
-    popup.querySelectorAll(".btn-size").forEach(btn => {
-        btn.onclick = () => {
-            const ratio = btn.dataset.ratio;
-            popup.remove();
-            callback(ratio);
-        };
+    //Chọn kích thước từ menu trong kt-qu-phin-bn-mi
+    const sizeBtns = document.querySelectorAll('.choose-size-btns .size-btn');
+    sizeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const size = btn.dataset.size;
+            sections[4].style.display = 'none';
+            if (size === "1-1") {
+                sections[5].style.display = 'block';
+                renderResult(document.querySelector('.kt-qu-phin-bn-mi .name-label').innerText, selectedStickers);
+            }else if (size === "9-16") {
+                sections[6].style.display = 'block';
+                renderResult(document.querySelector('.kt-qu-phin-bn-mi .name-label').innerText, selectedStickers);
+            }
+        });
     });
 
-    popup.querySelector(".btn-close").onclick = () => {
-        popup.remove();
-    };
-}
-
-(function () {
-    const resultsection = section[4];
-    const menuItems = resultsection.querySelectorAll(".menu-item");
-
-    const btnDownLoad = menuItems[0];
-    //const btnRetry = menuItems[1];
-    //const btnshare = menuItems[2];
-
-    btnDownLoad.addEventListener("click", () =>  {
-        showNoticalModal(() => {
-            showSizePopup((ratio) => {
-                const resultDiv = resultsection.queryselectior(".div");
-                html2canvas(resultDiv, {scale: 2}).then((canvas) => {
-                    const link = document.createElement("a");
-                    link.download = ratio === "1" ? "avatar.png" : "story.png";
-                    link.href = canvas.toDataURL("image/png");
-                    link.click();
-                });
-            });
+    if (downloadBtn && sizeModal) {
+        downloadBtn.addEventListener('click', function() {
+            sizeModal.style.display = 'flex';
+            if (chooseSizeBtns) chooseSizeBtns.style.display = "none";
         });
+    }
+
+    if (closeModalBtn && sizeModal) {
+        closeModalBtn.addEventListener('click', function() {
+            sizeModal.style.display = 'none';
+            if (chooseSizeBtns) chooseSizeBtns.style.display = 'flex';
+        });
+    }
+    // Nút chuyển trong section 1:1 và 9:16
+    const switchSizeBtns = document.querySelectorAll('.size .size-btn, .size-9-16 .size-btn');
+    switchSizeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const size = btn.dataset.size;
+            sections[5].style.display = 'none';
+            sections[6].style.display = 'none';
+            if (size === "1-1") {
+                sections[5].style.display = 'block';
+            } else if (size === "9-16") {
+                sections[6].style.display = 'block';
+            }
+            renderResult(document.querySelector('.kt-qu-phin-bn-mi .name-label').innerText, selectedStickers);
+        });
+    });
+
+    const backBtns = document.querySelectorAll('.size .chvron-left, .size-9-16 .chvron-left');
+
+    backBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            sections[5].style.display = 'none';
+            sections[6].style.display= 'none';
+
+
+            sections[4].style.display = 'block';
+
+            renderResult(document.querySelector('.kt-qu-phin-bn-mi .name-label').innerText, selectedStickers);
+        })
+    })
+
+    function downloadSectionAsImage(section) {
+        html2canvas(section, {useCORS: true, allowTaint: true, scale: 2}).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'zalopay-result.png'
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    }
+
+    document.querySelectorAll('.size #download-btn-1-1, .size-9-16 #download-btn-9-16').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const section = btn.closest('.size, .size-9-16');
+            if (section) {
+                const overlap = section.querySelector('.overlap')
+                if (overlap) downloadSectionAsImage(overlap);
+            }
+        })
+    });
+    document.querySelectorAll("img").forEach(img => {
+        img.setAttribute("Crossorigin", "anonymous");
     });
 });

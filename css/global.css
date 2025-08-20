@@ -24,3 +24,38 @@ a {
         overflow: hidden;
     }
 }
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+.modal-content {
+    background: #fff;
+    padding: 24px;
+    border-radius: 16px;
+    min-width: 300px;
+    text-align: center;
+}
+.modal-close {
+    position: absolute;
+    top: 8px; right: 12px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+.choose-size-btns {
+    position: absolute;
+    display: none;
+    justify-content: center;
+    top: 700px;
+    left: 130px;
+    gap: 68px;
+    margin-bottom: 12px;
+    margin-top: 12px;
+}
