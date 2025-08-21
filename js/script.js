@@ -397,4 +397,8 @@ document.querySelectorAll('.size .menu-item:nth-child(3), .size-9-16 .menu-item:
     });
 });
 
+document.getElementById('.group-2').addEventListener("click", () => {
+    const shareUrl = encodeURIComponent()
+})
+
 
