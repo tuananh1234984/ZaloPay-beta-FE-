@@ -196,20 +196,29 @@ function renderResult(name, stickers) {
     const containers = [
         document.querySelector('.kt-qu-phin-bn-mi'),
         document.querySelector('.size'),
-        document.querySelector('.size-9-16')
+        document.querySelector('.size-9-16'),
+        document.querySelector('.mn-hinh-hin-ra-chia-se'),
+        document.querySelector('.mn-hinh-hin-ra-chia-se-9-16')
     ];
     containers.forEach(container => {
         if (!container) return;
         const nameDiv = container.querySelector('.name-label');
         if (nameDiv) nameDiv.innerText = name;
 
-        const stickerBox = container.querySelector('.sticker-box');
-        if (stickerBox) {
-            stickerBox.innerHTML = `
-                ${stickers[0] ? `<img class="icon" src="${stickers[0]}" alt="sticker">` : ''}
-                ${stickers[1] ? `<img class="img" src="${stickers[1]}" alt="sticker">` : ''}
-                ${stickers[2] ? `<img class="icon-2" src="${stickers[2]}" alt="sticker">` : ''}
-            `;
+
+        const group = container.querySelector('.group');
+        if(!group) return;
+
+        group.querySelectorAll('.icon, .img, .icon-2').forEach(el => el.remove());
+
+        if (stickers[0]){
+            group.insertAdjacentHTML('beforeend', `<img class="icon" src="${stickers[0]}" alt="Sticker 1">`);
+        }
+        if (stickers[1]) {
+            group.insertAdjacentHTML('beforeend', `<img class="img" src="${stickers[1]}" alt="Sticker 2">`);
+        }
+        if (stickers[2]) {
+            group.insertAdjacentHTML('beforeend', `<img class="icon-2" src="${stickers[2]}" alt="Sticker 3">`);
         }
     })
 }
@@ -301,3 +310,91 @@ document.addEventListener('DOMContentLoaded', function() {
         img.setAttribute("Crossorigin", "anonymous");
     });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Lấy đúng 2 <section> kết quả
+    const section1 = document.querySelector('section .size')?.closest('section');
+    const section9 = document.querySelector('section .size-9-16')?.closest('section');
+
+    if (!section1 || !section9) {
+        console.warn('[toggle] Không tìm thấy section kết quả 1:1 hoặc 9:16');
+        return;
+    }
+
+  // Helper: lấy tên đã render ở màn kết quả chung để sync qua 2 size
+    const getName = () =>
+        document.querySelector('.kt-qu-phin-bn-mi .name-label')?.innerText || '';
+
+  // Tập hợp TẤT CẢ trigger chuyển sang 1:1
+    const to1 = [
+    // trong section 1:1 (nếu người dùng đang ở 9:16 nhưng click khu vực 1:1 vẫn xử lý)
+        section1.querySelector('.group-7 .rectangle'),
+        section1.querySelector('.text-wrapper-4'),
+    // trong section 9:16
+        section9.querySelector('.group-7 .rectangle'),
+        section9.querySelector('.text-wrapper-4'),
+    ].filter(Boolean);
+
+  // Tập hợp TẤT CẢ trigger chuyển sang 9:16
+    const to916 = [
+        // trong section 1:1
+        section1.querySelector('.overlap-wrapper .rectangle-2'),
+        section1.querySelector('.text-wrapper-5'),
+        // trong section 9:16
+        section9.querySelector('.overlap-wrapper .rectangle-2'),
+        section9.querySelector('.text-wrapper-5'),
+    ].filter(Boolean);
+
+    function show1() {
+        section1.style.display = 'block';
+        section9.style.display = 'none';
+        renderResult(getName(), selectedStickers);
+    }
+
+    function show916() {
+        section1.style.display = 'none';
+        section9.style.display = 'block';
+        renderResult(getName(), selectedStickers);
+    }
+
+  // Gắn listener
+    to1.forEach(el => el.addEventListener('click', show1));
+    to916.forEach(el => el.addEventListener('click', show916));
+});
+
+// --- XỬ LÝ CHIA SẺ ---
+document.querySelectorAll('.size .menu-item:nth-child(3), .size-9-16 .menu-item:nth-child(3)')
+.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const currentSection = btn.closest('.size, .size-9-16');
+        const isOneOne = currentSection.classList.contains('size');
+        const isNineSixteen = currentSection.classList.contains('size-9-16');
+
+        // Ẩn 2 màn kết quả gốc
+        sections[5].style.display = 'none';
+        sections[6].style.display = 'none';
+
+        if (isOneOne) {
+            // hiện màn chia sẻ 1:1 (giả sử nằm ở sections[7])
+            sections[7].style.display = 'block';
+            sections[7].classList.add('fade-in-up');
+
+            renderResult(
+                document.querySelector('.kt-qu-phin-bn-mi .name-label').innerText,
+                selectedStickers
+            );
+        } 
+        else if (isNineSixteen) {
+            // hiện màn chia sẻ 9:16 (giả sử nằm ở sections[8])
+            sections[8].style.display = 'block';
+            sections[8].classList.add('fade-in-up');
+
+            renderResult(
+                document.querySelector('.kt-qu-phin-bn-mi .name-label').innerText,
+                selectedStickers
+            );
+        }
+    });
+});
+
+
