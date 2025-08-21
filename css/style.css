@@ -1190,32 +1190,32 @@ button .x-c-nh-n {
     line-height: normal;
 }
 
-.kt-qu-phin-bn-mi .icon {
+.kt-qu-phin-bn-mi .group .icon {
     position: absolute;
     width: 60px;
     height: 41px;
-    top: 295px;
-    right: 56px;
+    top: -50px;
+    right: 0px;
     transform: rotate(-12deg);
     object-fit: cover;
 }
 
-.kt-qu-phin-bn-mi .img {
+.kt-qu-phin-bn-mi .group .img {
     position: absolute;
     width: 88px;
     height: 61px;
-    top: 440px;
-    left: 56px;
+    top: -60px;
+    left: 0px;
     transform:rotate(10.96deg);
     object-fit: cover;
 }
 
-.kt-qu-phin-bn-mi .icon-2 {
+.kt-qu-phin-bn-mi .group .icon-2 {
     position: absolute;
     width: 74px;
     height: 51px;
-    top: 285px;
-    left: 70px;
+    top: 100px;
+    left: 20px;
     transform: rotate(-15.78deg);
     object-fit: cover;
 }
@@ -1723,7 +1723,7 @@ button .x-c-nh-n {
     position: absolute;
     width: 88px;
     height: 61px;
-    top: 60px;
+    top: -60px;
     left: 0px;
     transform:rotate(10.96deg);
     object-fit: cover;
@@ -1733,8 +1733,8 @@ button .x-c-nh-n {
     position: absolute;
     width: 74px;
     height: 51px;
-    top: 120px;
-    left: 0px;
+    top: 100px;
+    left: 20px;
     transform: rotate(-15.78deg);
     object-fit: cover;
 }
@@ -1942,7 +1942,7 @@ button .x-c-nh-n {
 
 .size-9-16 .group-wrapper {
     position: absolute;
-    Width: 282px;
+    width: 282px;
     height: 500px;
     top: 0px;
     left: 0px;
@@ -1981,30 +1981,33 @@ button .x-c-nh-n {
 
 .size-9-16 .icon {
     position: absolute;
-    width: 58px;
-    height: 45px;
-    top: 295px;
-    right: 56px;
+    width: 60px;
+    height: 41px;
+    top: 30px;
+    left: 130px;
     transform: rotate(-12deg);
     object-fit: cover;
 }
 
 .size-9-16 .img {
     position: absolute;
-    width: 85px;
-    height: 67px;
-    top: 440px;
-    left: 56px;
+    width: 88px;
+    height: 61px;
+    top: 10px;
+    left: -10px;
+    right: 0px;
     transform:rotate(10.96deg);
     object-fit: cover;
 }
+
 
 .size-9-16 .icon-2 {
     position: absolute;
     width: 74px;
     height: 51px;
-    top: 285px;
-    left: 70px;
+    top: 160px;
+    left: -20px;
+    right: 180px;
     transform: rotate(-15.78deg);
     object-fit: cover;
 }
@@ -2169,6 +2172,475 @@ button .x-c-nh-n {
     object-fit: cover
 }
 
+.mn-hinh-hin-ra-chia-se {
+    background-color: #ffffff;
+    display: grid;
+    justify-items: center;
+    align-items: start;
+    width: 100vw;
+}
+
+.mn-hinh-hin-ra-chia-se .div {
+    background-color: #ffffff;
+    width: 390px;
+    height: 844px;
+    position: relative;
+}
+
+.mn-hinh-hin-ra-chia-se .overlap {
+    position: absolute;
+    width: 354px;
+    height: 354px;
+    top: 250px;
+    left: 20px;
+    background-color: #ffffff;
+    box-shadow: 0px 0px 3px #00000040;
+}
+
+.mn-hinh-hin-ra-chia-se .vector {
+    position: absolute;
+    width: 184px;
+    height: 216px;
+    top: 69px;
+    left: 85px;
+}
+
+.mn-hinh-hin-ra-chia-se .group {
+    position: absolute;
+    width: 254px;
+    height: 90px;
+    top: 132px;
+    left: 52px;
+}
+
+
+.mn-hinh-hin-ra-chia-se .text-wrapper {
+    position: absolute;
+    top: 0;
+    left: 14px;
+    font-family: "Aeonik Pro-Bold", Helvetica;
+    font-weight: 700;
+    color: #0033c9;
+    font-size: 40px;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+}
+
+.mn-hinh-hin-ra-chia-se .text-wrapper-2 {
+    position: absolute;
+    width: 280px;
+    height: 49px;
+    top: 41px;
+    left: -10px;
+    font-family: "Aeonik Pro-Bold", Helvetica;
+    font-weight: 700;
+    color: #00cf6a;
+    font-size: 40px;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+}
+
+.mn-hinh-hin-ra-chia-se .icon {
+    position: absolute;
+    width: 60px;
+    height: 41px;
+    top: -50px;
+    right: -10px;
+    transform: rotate(-12deg);
+    object-fit: cover;
+}
+
+.mn-hinh-hin-ra-chia-se .img {
+    position: absolute;
+    width: 88px;
+    height: 61px;
+    top: -65px;
+    left: 10px;
+    transform:rotate(10.96deg);
+    object-fit: cover;
+}
+
+.mn-hinh-hin-ra-chia-se .icon-2 {
+    position: absolute;
+    width: 74px;
+    height: 51px;
+    top: 120px;
+    left: 11px;
+    transform: rotate(-15.78deg);
+    object-fit: cover;
+}
+
+.mn-hinh-hin-ra-chia-se .chia-s-ngay-phi-n-b-wrapper {
+    position: absolute;
+    width: 308px;
+    height: 72px;
+    top: 149px;
+    left: 42px;
+}
+
+.mn-hinh-hin-ra-chia-se .chia-s-ngay-phi-n-b {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-family: "Aeonik Pro-Bold", Helvetica;
+    font-weight: 700;
+    color: #0033c9;
+    font-size: 19px;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+}
+
+.mn-hinh-hin-ra-chia-se .group-2 {
+    position: absolute;
+    width: 46px;
+    height: 46px;
+    top: 649px;
+    left: 172px;
+}
+
+.mn-hinh-hin-ra-chia-se .div-wrapper {
+    position: absolute;
+    width: 302px;
+    height: 35px;
+    top: 718px;
+    left: 44px;
+    background-color: #0033c9;
+    border-radius: 30px;
+}
+
+.mn-hinh-hin-ra-chia-se .p {
+    position: absolute;
+    top: 4px;
+    left: 14px;
+    font-weight: 400;
+    font-family: "Aeonik Pro-Regular", Helvetica;
+    color: #ffffffff;
+    font-size: 20px;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+    white-space: nowrap;
+}
+
+.mn-hinh-hin-ra-chia-se .overlap-wrapper {
+    position: absolute;
+    width: 390px;
+    height: 52px;
+    top: 0;
+    left: 0;
+}
+
+.mn-hinh-hin-ra-chia-se .group-wrapper {
+    height: 89px;
+    background-color: #0033c9;
+}
+
+.mn-hinh-hin-ra-chia-se .group-3 {
+    position: relative;
+    width: 224px;
+    height: 22px;
+    top: 53px;
+    left: 7px;
+}
+
+.mn-hinh-hin-ra-chia-se .chevron-left {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    top: 0;
+    left: 0;
+}
+
+.mn-hinh-hin-ra-chia-se .vector-2 {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    top: 4px;
+    left: 7px;
+}
+
+.mn-hinh-hin-ra-chia-se .logo-FA {
+    position: absolute;
+    width: 71px;
+    height: 16px;
+    top: 3px;
+    left: 153px;
+    object-fit: cover;
+}
+
+.mn-hinh-hin-ra-chia-se .group-4 {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    top: 58px;
+    left: 364px;
+}
+
+.mn-hinh-hin-ra-chia-se .vector-wrapper {
+    position: relative;
+    width: 15px;
+    height: 15px;
+    top: -1px;
+    left: -1px;
+    background-size: 100% 100%;
+}
+
+.mn-hinh-hin-ra-chia-se .vector-3 {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    top: 0;
+    left: 0;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16 {
+    background-color: #ffffff;
+    display: grid;
+    justify-items: center;
+    align-items: start;
+    width: 100vw;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16 .div {
+    background-color: #ffffff;
+    width: 390px;
+    height: 844px;
+    position: relative;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16 .overlap {
+    position: absolute;
+    width: 282px;
+    height: 500px;
+    top: 170px;
+    left: 50px;
+    background-image: url(../assets/img/mark-group.png);
+    background-size: 100% 100%;
+    background-color: #ffffff;
+    box-shadow: 0px 0px 3px #00000040;
+}
+.mn-hinh-hin-ra-chia-se-9-16 .vector {
+    position: absolute;
+    left: 60px;
+    top: 150px;
+    width: 159px;
+    height: 187px;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16 .group {
+    position: absolute;
+    width: 254px;
+    height: 90px;
+    top: 132px;
+    left: 52px;
+}
+
+
+.mn-hinh-hin-ra-chia-se-9-16 .text-wrapper {
+    position: absolute;
+    width: 192px;
+    top: 80px;
+    left: auto;
+    font-family: "Aeonik Pro-Bold", Helvetica;
+    font-weight: 700;
+    color: #0033c9;
+    font-size: 30px;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16 .text-wrapper-2 {
+    position: absolute;
+    width: 228px;
+    height: 31px;
+    top: 110px;
+    left: -20px;
+    font-family: "Aeonik Pro-Bold", Helvetica;
+    font-weight: 700;
+    color: #00cf6a;
+    font-size: 30px;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16 .icon {
+    position: absolute;
+    width: 60px;
+    height: 41px;
+    top: 30px;
+    left: 130px;
+    transform: rotate(-12deg);
+    object-fit: cover;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16 .img {
+    position: absolute;
+    width: 88px;
+    height: 61px;
+    top: 10px;
+    left: -10px;
+    right: 0px;
+    transform:rotate(10.96deg);
+    object-fit: cover;
+}
+
+
+.mn-hinh-hin-ra-chia-se-9-16 .icon-2 {
+    position: absolute;
+    width: 74px;
+    height: 51px;
+    top: 160px;
+    left: -20px;
+    right: 180px;
+    transform: rotate(-15.78deg);
+    object-fit: cover;
+}
+.mn-hinh-hin-ra-chia-se-9-16 .chia-s-ngay-phi-n-b-wrapper {
+    position: absolute;
+    width: 308px;
+    height: 72px;
+    top: 120px;
+    left: 42px;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16  .chia-s-ngay-phi-n-b {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-family: "Aeonik Pro-Bold", Helvetica;
+    font-weight: 700;
+    color: #0033c9;
+    font-size: 19px;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16  .group-2 {
+    position: absolute;
+    width: 46px;
+    height: 46px;
+    top: 690px;
+    left: 172px;
+}
+
+
+.mn-hinh-hin-ra-chia-se-9-16  .div-wrapper {
+    position: absolute;
+    width: 302px;
+    height: 35px;
+    top: 750px;
+    left: 44px;
+    background-color: #0033c9;
+    border-radius: 30px;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16  .p {
+    position: absolute;
+    top: 4px;
+    left: 14px;
+    font-weight: 400;
+    font-family: "Aeonik Pro-Regular", Helvetica;
+    color: #ffffffff;
+    font-size: 20px;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+    white-space: nowrap;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16  .overlap-wrapper {
+    position: absolute;
+    width: 390px;
+    height: 52px;
+    top: 0;
+    left: 0;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16 .overlap-group-wrapper {
+    position: absolute;
+    width: 390px;
+    height: 52px;
+    top: 0;
+    left: 0;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16 .overlap-5 {
+    height: 89px;
+    background-color: #0033c9;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16 .group-8 {
+    position: relative;
+    width: 224px;
+    height: 22px;
+    top: 53px;
+    left: 7px;
+}
+
+
+.mn-hinh-hin-ra-chia-se-9-16 .group-3 {
+    position: relative;
+    width: 224px;
+    height: 22px;
+    top: 53px;
+    left: 7px;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16 .chvron-left {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    top: 0;
+    left: 0;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16 .vector-10 {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    top: 4px;
+    left: 7px;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16 .logo-FA {
+    position: absolute;
+    width: 71px;
+    height: 16px;
+    top: 3px;
+    left: 153px;
+    object-fit: cover;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16 .group-4 {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    top: 58px;
+    left: 364px;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16 .vector-wrapper {
+    position: relative;
+    width: 15px;
+    height: 15px;
+    top: -1px;
+    left: -1px;
+    background-size: 100% 100%;
+}
+
+.mn-hinh-hin-ra-chia-se-9-16 .vector-3 {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    top: 0;
+    left: 0;
+}
 
 
 
