@@ -448,5 +448,5 @@ document.addEventListener("DOMContentLoaded", () => {
             )
         });
     });
-})
+});
 
