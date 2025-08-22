@@ -398,8 +398,8 @@ document.querySelectorAll('.size .menu-item:nth-child(3), .size-9-16 .menu-item:
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    const shareBtn = document.querySelector(".group-2");
-    if (shareBtn) {
+    const shareBtns = document.querySelectorAll(".group-2");
+    shareBtns.forEach(shareBtn => {
         shareBtn.addEventListener("click", () => {
             const shareUrl = encodeURIComponent("https://tuananh1234984.github.io/ZaloPay-beta-FE-/");
             window.open(
@@ -408,7 +408,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "width=600,height=400"
             );
         });
-    }
+    })
 });
 
 
