@@ -408,7 +408,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "width=600,height=400"
             );
         });
-    }
+    })
 });
 
 
