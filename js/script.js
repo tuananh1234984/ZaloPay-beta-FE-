@@ -398,17 +398,55 @@ document.querySelectorAll('.size .menu-item:nth-child(3), .size-9-16 .menu-item:
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    const shareBtns = document.querySelectorAll(".group-2");
+    const shareBtns = document.querySelectorAll('.group-2');
+
+    const cloudName = "den7ju8t4";
+    const uploadPreset = "Zalo-1-1-9-16";
+
+    async function captureAndUpload(elementId) {
+        const target = document.getElementById(elementId);
+        const canvas = await html2canvas(target);
+        const dataUrl = canvas.toDataURL('image/png');
+        const blob = await (await fetch(dataUrl)).blob();
+
+        const formData = new FormData();
+        formData.append("file", blob);
+        formData.append("upload_present", uploadPreset);
+
+        const res= await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await res.json();
+        return data.secure_url;
+    }
+
     shareBtns.forEach(shareBtn => {
-        shareBtn.addEventListener("click", () => {
-            const shareUrl = encodeURIComponent("https://tuananh1234984.github.io/ZaloPay-beta-FE-/");
+        shareBtn.addEventListener('click', async () => {
+            let sectionId = null;
+            if (shareBtn.closest(".mn-hinh-hin-ra-chia-se")) {
+                sectionId = 'capture1';
+            }else if (shareBtn.closest(".mn-hinh-hin-ra-chia-se-9-16")){
+                sectionId = 'capture9';
+            }
+
+            if(!sectionId) {
+                alert('Không tìm thấy phần chia sẻ!');
+                return;
+            }
+
+            //Upload ảnh
+            const imgUrl = await captureAndUpload(sectionId);
+
+            //Share Facebook
+            const shareUrl = encodeURIComponent(imgUrl);
             window.open(
                 `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
                 "_blank",
-                "width=600,height=400"
-            );
+                "width=600, height=400"
+            )
         });
-    })
-});
-
+    });
+})
 
