@@ -2757,7 +2757,7 @@ button .x-c-nh-n {
     object-fit: cover;
 }
 
-.giao-din-kt-qu-hin .phin-n-b-n-n-y-qu-b-n {
+.giao-din-kt-qu-hin .phi-n-b-n-n-y-qu-b-n {
     position: absolute;
     width: 251px;
     top: 608px;
@@ -2772,11 +2772,19 @@ button .x-c-nh-n {
 }
 
 .giao-din-kt-qu-hin .group-wrapper {
+    position: absolute;
+    width: 188px;
+    height: 43px;
+    top: 699px;
+    left: 102px;
+}
+
+.giao-din-kt-qu-hin .x-c-nh-n-wrapper {
     position: relative;
     height: 43px;
     background-color: #0033c9;
     border-radius: 30px;
-}
+} 
 
 .giao-din-kt-qu-hin .x-c-nh-n {
     position: absolute;
@@ -2788,7 +2796,8 @@ button .x-c-nh-n {
     font-size: 20px;
     text-align: center;
     letter-spacing: 0;
-
+    line-height: normal;
+    white-space: nowrap;;
 }
 
 
