@@ -450,3 +450,28 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+    const backBtnsShare = document.querySelectorAll(
+        '.mn-hinh-hin-ra-chia-se .chevron-left, .mn-hinh-hin-ra-chia-se-9-16 .chvron-left'
+    );
+
+    backBtnsShare.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const current = btn.closest('section');
+            if (!current) return;
+
+            current.style.display = 'none';
+
+            sections[4].style.display = 'block';
+            sections[4].classList.add('fade-in-up');
+
+            renderResult(
+                document.querySelector('.kt-qu-phin-bn-mi .name-label').innerText,
+                selectedStickers
+            );
+        });
+    });
+});
+
+
+
