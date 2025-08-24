@@ -397,56 +397,42 @@ document.querySelectorAll('.size .menu-item:nth-child(3), .size-9-16 .menu-item:
     });
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-    const shareBtns = document.querySelectorAll('.group-2');
+document.querySelectorAll(".share-btn").forEach(btn => {
+    btn.addEventListener('click', async () => {
+        try {
+            const capture1 = document.getSelection(".giao-din-kt-qu-hin");
 
-    const cloudName = "den7ju8t4";
-    const uploadPreset = "Zalo-1-1-9-16";
+            const canvas = await html2canvas(capture1, {
+                useCORS: true,
+                backgroundColor: null
+            });
 
-    async function captureAndUpload(elementId) {
-        const target = document.getElementById(elementId);
-        const canvas = await html2canvas(target);
-        const dataUrl = canvas.toDataURL('image/png');
-        const blob = await (await fetch(dataUrl)).blob();
+            const dataURL = canvas.toDataURL("image/png");
 
-        const formData = new FormData();
-        formData.append("file", blob);
-        formData.append("upload_preset", uploadPreset);
+            //Upload lên Cloudinary
+            const formData = new FormData();
+            formData.append("file", dataURL);
+            formData.append("upload_preset", "Zalo-1-1-9-16");
 
-        const res= await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-            method: "POST",
-            body: formData
-        });
+            const response = await fetch("https://api.cloudinary.com/v1_1/den7ju8t4/image/upload", {
+                method: "POST",
+                body: formData
+            });
 
-        const data = await res.json();
-        return data.secure_url;
-    }
-
-    shareBtns.forEach(shareBtn => {
-        shareBtn.addEventListener('click', async () => {
-            let sectionId = null;
-            if (shareBtn.closest(".mn-hinh-hin-ra-chia-se")) {
-                sectionId = 'capture1';
-            }else if (shareBtn.closest(".mn-hinh-hin-ra-chia-se-9-16")){
-                sectionId = 'capture9';
+            const data = await response.json();
+            if (data.secure_url) {
+                const shareUrl = encodeURIComponent(data.secure_url);
+                window.open(
+                    `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
+                    "_blank",
+                    "width=600,height=400"
+                );
+            }else {
+                alert("Chia sẻ khong thanh cong, vui long thu lai sau.");
             }
-
-            if(!sectionId) {
-                alert('Không tìm thấy phần chia sẻ!');
-                return;
-            }
-
-            //Upload ảnh
-            const imgUrl = await captureAndUpload(sectionId);
-
-            //Share Facebook
-            const shareUrl = encodeURIComponent(imgUrl);
-            window.open(
-                `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
-                "_blank",
-                "width=600, height=400"
-            )
-        });
+        }catch (err) {
+            console.error(err);
+        }
     });
 });
 
