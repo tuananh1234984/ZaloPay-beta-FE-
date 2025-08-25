@@ -431,6 +431,7 @@ document.querySelectorAll(".group-2").forEach(btn => {
             });
 
             const data = await response.json();
+            console.log(data); // Add this line to inspect the error
 
             if (data.secure_url){
                 const shareUrl = encodeURIComponent(data.secure_url);
