@@ -401,7 +401,7 @@ document.querySelectorAll(".group-2").forEach(btn => {
     btn.addEventListener("click", async () => {
         try {
             const name = document.querySelector('.kt-qu-phin-bn-mi .name-label')?.innerText || "";
-            const captureSection = document.getElementById("capture1");
+            const captureSection = document.querySelector(".mn-hinh-hin-ra-chia-se:visible, .mn-hinh-hin-ra-chia-se-9-16:visible");
             if (!captureSection) {
                 alert("Không tìm thấy section để chụp ảnh");
                 return;
