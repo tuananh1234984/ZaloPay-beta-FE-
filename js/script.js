@@ -454,7 +454,7 @@ document.querySelectorAll(".group-2").forEach(btn => {
             // Upload lên Cloudinary
             const formData = new FormData();
             formData.append("file", blob, "capture.png");
-            formData.append("upload_preset", "Zalo-1-1-9-16");
+            formData.append("upload_preset", "zalopay_unsigned");
 
             console.log("Upload preset:", formData.get("upload_preset"));
 
