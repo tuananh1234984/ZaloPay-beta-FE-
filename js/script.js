@@ -418,9 +418,11 @@ document.querySelectorAll(".group-2").forEach(btn => {
 
             const dataURL = canvas.toDataURL("image/png");
 
+            const blob = await (await fetch(dataURL)).blob();
+
             //Upload lên Cloudinary
             const formData= new FormData();
-            formData.append("file", dataURL);
+            formData.append("file", blob);
             formData.append("upload_preset", "Zalo-1-1-9-16");
 
             const response = await fetch("https://api.cloudinary.com/v1_1/den7ju8t4/image/upload", {
