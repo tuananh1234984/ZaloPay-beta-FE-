@@ -420,9 +420,9 @@ document.querySelectorAll(".group-2").forEach(btn => {
 
             const formData = new FormData();
             formData.append("file", dataURL);
-            formData.append("upload_preset", iploadPreset);
+            formData.append("upload_preset", uploadPreset);
 
-            const response =await fetch(`https://api.cloudnary.com/v1_1/${clound}/image/upload`, {
+            const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
                 method: "POST",
                 body: formData
             });
