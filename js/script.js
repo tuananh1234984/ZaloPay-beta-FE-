@@ -422,7 +422,7 @@ document.querySelectorAll(".group-2").forEach(btn => {
 
             //Upload lên Cloudinary
             const formData= new FormData();
-            formData.append("file", blob);
+            formData.append("file", blob, "capture.png");
             formData.append("upload_preset", "Zalo-1-1-9-16");
 
             const response = await fetch("https://api.cloudinary.com/v1_1/den7ju8t4/image/upload", {
