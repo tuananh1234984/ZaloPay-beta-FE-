@@ -403,26 +403,39 @@ document.querySelectorAll(".group-2").forEach(btn => {
             const name = document.querySelector('.kt-qu-phin-bn-mi .name-label')?.innerText || "";
             const lastSection = document.querySelector('.giao-din-kt-qu-hin');
 
-            // Hiển thị slide cuối tạm để chụp nếu đang ẩn
+            if (!lastSection) {
+                alert("Không tìm thấy slide cuối để chụp!");
+                return;
+            }
+
+            // Hiển thị slide cuối nếu đang ẩn
             const wasHidden = lastSection.style.display === "none";
             if (wasHidden) {
                 lastSection.style.display = 'block';
-                lastSection.classList.add('fade-in-up');
             }
 
-            // Render tên + sticker
+            // Render tên + sticker vào slide cuối
             renderResult(name, selectedStickers);
-            await new Promise(r => setTimeout(r, 500)); // chờ render ổn định
 
-            // Chụp ảnh slide cuối
+            // Chờ một chút cho giao diện render xong
+            await new Promise(r => setTimeout(r, 800));
+
+            // Chụp ảnh slide cuối bằng html2canvas
             const canvas = await html2canvas(lastSection, {
                 useCORS: true,
                 backgroundColor: null,
                 scale: 2
             });
 
-            // Tạo Blob chuẩn từ base64
+            console.log("Canvas width:", canvas.width, "height:", canvas.height);
+
             const dataURL = canvas.toDataURL("image/png");
+            if (!dataURL.startsWith("data:image/png")) {
+                alert("Không tạo được ảnh từ canvas!");
+                return;
+            }
+
+            // Tạo Blob chuẩn từ base64
             const byteString = atob(dataURL.split(',')[1]);
             const arrayBuffer = new ArrayBuffer(byteString.length);
             const intArray = new Uint8Array(arrayBuffer);
@@ -431,9 +444,14 @@ document.querySelectorAll(".group-2").forEach(btn => {
             }
             const blob = new Blob([intArray], { type: "image/png" });
 
-            console.log("Blob size:", blob.size); // Debug
+            console.log("Blob size:", blob.size);
 
-            // Upload Cloudinary
+            if (blob.size === 0) {
+                alert("Ảnh bị rỗng! Kiểm tra phần tử HTML cần chụp.");
+                return;
+            }
+
+            // Upload lên Cloudinary
             const formData = new FormData();
             formData.append("file", blob, "capture.png");
             formData.append("upload_preset", "Zalo-1-1-9-16");
@@ -469,6 +487,7 @@ document.querySelectorAll(".group-2").forEach(btn => {
         }
     });
 });
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const backBtnsShare = document.querySelectorAll(
