@@ -397,7 +397,7 @@ document.querySelectorAll('.size .menu-item:nth-child(3), .size-9-16 .menu-item:
     });
 });
 
-document.querySelectorAll(".share-btn").forEach(btn => {
+document.querySelectorAll(".group-2").forEach(btn => {
     btn.addEventListener('click', async () => {
         try {
             const capture1 = document.querySelector(".giao-din-kt-qu-hin");
