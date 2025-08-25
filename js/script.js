@@ -398,40 +398,51 @@ document.querySelectorAll('.size .menu-item:nth-child(3), .size-9-16 .menu-item:
 });
 
 document.querySelectorAll(".group-2").forEach(btn => {
-    btn.addEventListener('click', async () => {
+    btn.addEventListener("click", async () => {
         try {
-            const capture1 = document.querySelector(".giao-din-kt-qu-hin");
+            const captureSection = document.querySelector(".giao-din-kt-qu-hin");
+            if (!captureSection) {
+                console.error("Không tìm thấy section giao-din-kt-qu-hin");
+                return;
+            }
 
-            const canvas = await html2canvas(capture1, {
+            //capture
+            const canvas = await html2canvas(captureSection, {
                 useCORS: true,
-                backgroundColor: null
+                backgroundColor: null,
+                scale: 2
             });
 
-            const dataURL = canvas.toDataURL("image/png");
+            const dataURL = canvas.toDataURL("img/png");
 
-            //Upload lên Cloudinary
+            const cloudName = "den7ju8t4";
+            const uploadPreset = "Zalo-1-1-9-16";
+
             const formData = new FormData();
             formData.append("file", dataURL);
-            formData.append("upload_preset", "Zalo-1-1-9-16");
+            formData.append("upload_preset", iploadPreset);
 
-            const response = await fetch("https://api.cloudinary.com/v1_1/den7ju8t4/image/upload", {
+            const response =await fetch(`https://api.cloudnary.com/v1_1/${clound}/image/upload`, {
                 method: "POST",
                 body: formData
             });
 
             const data = await response.json();
-            if (data.secure_url) {
-                const shareUrl = encodeURIComponent(data.secure_url);
+            console.log("Cloudinary response: ", data);
+
+            if (data.secure_URL) {
+                const shareUrl = encodeURIComponent(data.secure_URL);
                 window.open(
                     `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
-                    "_blank",
-                    "width=600,height=400"
+                    "_blanl",
+                    "width=600, height=400"
                 );
             }else {
-                alert("Chia sẻ khong thanh cong, vui long thu lai sau.");
+                console.error("Upload thất bại: ",data);
+                alert("Chia sẻ không thành công, vui lòng kiểm tra lại preset / cloudName.");
             }
         }catch (err) {
-            console.error(err);
+            console.error("Lỗi chia sẻ: ", err);
         }
     });
 });
