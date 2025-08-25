@@ -401,27 +401,31 @@ document.querySelectorAll(".group-2").forEach(btn => {
     btn.addEventListener("click", async () => {
         try {
             const name = document.querySelector('.kt-qu-phin-bn-mi .name-label')?.innerText || "";
-            const captureSection = document.querySelector(".mn-hinh-hin-ra-chia-se:visible, .mn-hinh-hin-ra-chia-se-9-16:visible");
-            if (!captureSection) {
-                alert("Không tìm thấy section để chụp ảnh");
-                return;
+
+            const lastSection = document.querySelector('.giao-din-kt-qu-hin');
+
+            // Hiển thị slide cuối tạm thời để chụp
+            const wasHidden = lastSection.style.display === "none";
+            if (wasHidden) {
+                lastSection.style.display = 'block';
+                lastSection.classList.add('fade-in-up');
             }
+
             renderResult(name, selectedStickers);
+            await new Promise(r => setTimeout(r, 500));
 
-            await new Promise(r => setTimeout(r, 300));
-
-            const canvas = await html2canvas(captureSection, {
+            // Chụp ảnh slide cuối
+            const canvas = await html2canvas(lastSection, {
                 useCORS: true,
                 backgroundColor: null,
                 scale: 2
             });
 
             const dataURL = canvas.toDataURL("image/png");
-
             const blob = await (await fetch(dataURL)).blob();
 
-            //Upload lên Cloudinary
-            const formData= new FormData();
+            // Upload Cloudinary
+            const formData = new FormData();
             formData.append("file", blob, "capture.png");
             formData.append("upload_preset", "Zalo-1-1-9-16");
 
@@ -431,19 +435,23 @@ document.querySelectorAll(".group-2").forEach(btn => {
             });
 
             const data = await response.json();
-            console.log(data); // Add this line to inspect the error
 
-            if (data.secure_url){
+            if (data.secure_url) {
                 const shareUrl = encodeURIComponent(data.secure_url);
                 window.open(
                     `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
                     "_blank",
-                    "width=600, height=400"
+                    "width=600,height=400"
                 );
-            }else {
+
+                // Sau khi upload xong, nếu ban đầu slide cuối ẩn thì ẩn lại
+                if (wasHidden) {
+                    lastSection.style.display = 'none';
+                }
+            } else {
                 alert("Chia sẻ không thành công, vui lòng thử lại sau");
             }
-        }catch (err) {
+        } catch (err) {
             console.error("Lỗi chia sẻ", err);
             alert("Có lỗi khi chia sẻ, vui lòng thử lại");
         }
