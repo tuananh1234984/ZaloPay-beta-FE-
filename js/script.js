@@ -413,13 +413,13 @@ document.querySelectorAll(".group-2").forEach(btn => {
                 scale: 2
             });
 
-            const dataURL = canvas.toDataURL("img/png");
+            const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
 
             const cloudName = "den7ju8t4";
             const uploadPreset = "Zalo-1-1-9-16";
 
             const formData = new FormData();
-            formData.append("file", dataURL);
+            formData.append("file", blob);
             formData.append("upload_preset", uploadPreset);
 
             const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
