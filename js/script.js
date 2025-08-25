@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
     });
     document.querySelectorAll("img").forEach(img => {
-        img.setAttribute("Crossorigin", "anonymous");
+        img.setAttribute("crossorigin", "anonymous");
     });
 });
 
