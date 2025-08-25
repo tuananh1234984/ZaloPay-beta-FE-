@@ -400,7 +400,7 @@ document.querySelectorAll('.size .menu-item:nth-child(3), .size-9-16 .menu-item:
 document.querySelectorAll(".share-btn").forEach(btn => {
     btn.addEventListener('click', async () => {
         try {
-            const capture1 = document.getSelection(".giao-din-kt-qu-hin");
+            const capture1 = document.querySelector(".giao-din-kt-qu-hin");
 
             const canvas = await html2canvas(capture1, {
                 useCORS: true,
