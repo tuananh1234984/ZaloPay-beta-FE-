@@ -400,33 +400,16 @@ document.querySelectorAll('.size .menu-item:nth-child(3), .size-9-16 .menu-item:
 document.querySelectorAll(".group-2").forEach(btn => {
     btn.addEventListener("click", async () => {
         try {
-            const captureSection = document.querySelector(".giao-din-kt-qu-hin");
+            const name = document.querySelector('.kt-qu-phin-bn-mi .name-label')?.innerText || "";
+            const captureSection = document.getElementById("capture1");
             if (!captureSection) {
-                console.error("Không tìm thấy section giao-din-kt-qu-hin");
+                alert("Không tìm thấy section để chụp ảnh");
                 return;
             }
+            renderResult(name, selectedStickers);
 
-            function dataURLtoBlob(dataURL) {
-                if (!dataURL || typeof dataURL !== 'string' || !dataURL.startsWith("data:image")) {
-                    throw new Error("Invalid dataURL: " + dataURL);
-                }
+            await new Promise(r => setTimeout(r, 300));
 
-                const arr = dataURL.split(",");
-                const mimeMatch = arr[0].match(/:(.*?);/);
-                if (!mimeMatch) {
-                    throw new Error("Không tìm thấy mime trong dataURL: " + arr[0]);
-                }
-                const mime = mimeMatch[1];
-                const bstr = atob(arr[1]);
-                let n = bstr.length;
-                const u8arr = new Uint8Array(n);
-                while (n--) {
-                    u8arr[n] = bstr.charCodeAt(n);
-                }
-                return new Blob([u8arr], { type: mime });
-            }
-
-            //capture
             const canvas = await html2canvas(captureSection, {
                 useCORS: true,
                 backgroundColor: null,
@@ -435,38 +418,31 @@ document.querySelectorAll(".group-2").forEach(btn => {
 
             const dataURL = canvas.toDataURL("image/png");
 
-            console.log("dataURL preview: ", dataURL.substring(0, 50)); //debug
-            // Convert dataURL to blob
-            const blob = dataURLtoBlob(dataURL);
+            //Upload lên Cloudinary
+            const formData= new FormData();
+            formData.append("file", dataURL);
+            formData.append("upload_preset", "Zalo-1-1-9-16");
 
-            const cloudName = "den7ju8t4";
-            const uploadPreset = "Zalo-1-1-9-16";
-
-            const formData = new FormData();
-            formData.append("file", blob);
-            formData.append("upload_preset", uploadPreset);
-
-            const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+            const response = await fetch("https://api.cloudinary.com/v1_1/den7ju8t4/image/upload", {
                 method: "POST",
                 body: formData
             });
 
             const data = await response.json();
-            console.log("Cloudinary response: ", data);
 
-            if (data.secure_URL) {
-                const shareUrl = encodeURIComponent(data.secure_URL);
+            if (data.secure_url){
+                const shareUrl = encodeURIComponent(data.secure_url);
                 window.open(
                     `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
-                    "_blanl",
+                    "_blank",
                     "width=600, height=400"
                 );
             }else {
-                console.error("Upload thất bại: ",data);
-                alert("Chia sẻ không thành công, vui lòng kiểm tra lại preset / cloudName.");
+                alert("Chia sẻ không thành công, vui lòng thử lại sau");
             }
         }catch (err) {
-            console.error("Lỗi chia sẻ: ", err);
+            console.error("Lỗi chia sẻ", err);
+            alert("Có lỗi khi chia sẻ, vui lòng thử lại");
         }
     });
 });
