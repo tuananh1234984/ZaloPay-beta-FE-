@@ -407,8 +407,16 @@ document.querySelectorAll(".group-2").forEach(btn => {
             }
 
             function dataURLtoBlob(dataURL) {
-                const arr = dataURL.split(',');
-                const mime = arr[0].match(/:(.*?);/)[1];
+                if (!dataURL || typeof dataURL !== 'string' || !dataURL.startsWith("data:image")) {
+                    throw new Error("Invalid dataURL: " + dataURL);
+                }
+
+                const arr = dataURL.split(",");
+                const mimeMatch = arr[0].match(/:(.*?);/);
+                if (!mimeMatch) {
+                    throw new Error("Không tìm thấy mime trong dataURL: " + arr[0]);
+                }
+                const mime = mimeMatch[1];
                 const bstr = atob(arr[1]);
                 let n = bstr.length;
                 const u8arr = new Uint8Array(n);
@@ -424,7 +432,10 @@ document.querySelectorAll(".group-2").forEach(btn => {
                 backgroundColor: null,
                 scale: 2
             });
+
             const dataURL = canvas.toDataURL("image/png");
+
+            console.log("dataURL preview: ", dataURL.substring(0, 50)); //debug
             // Convert dataURL to blob
             const blob = dataURLtoBlob(dataURL);
 
