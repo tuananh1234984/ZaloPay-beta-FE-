@@ -412,8 +412,9 @@ document.querySelectorAll(".group-2").forEach(btn => {
                 backgroundColor: null,
                 scale: 2
             });
+            const dataURL = canvas.toDataURL("image/png");
 
-            const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+            const blob = await fetch(dataURL).then(res => res.blob());
 
             const cloudName = "den7ju8t4";
             const uploadPreset = "Zalo-1-1-9-16";
