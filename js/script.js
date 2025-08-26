@@ -398,76 +398,80 @@ document.querySelectorAll('.size .menu-item:nth-child(3), .size-9-16 .menu-item:
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    const shareBtn = document.querySelectorAll(".group-2");
+    const sections = document.querySelectorAll("section");
     const finalSection = document.querySelector(".giao-din-kt-qu-hin");
-    const btnBox = finalSection.querySelector(".x-c-nh-n-wrapper");
 
-    async function uploadToCloudinary(blob) {
-        const formData = new FormData();
-        formData.append("file", blob, "capture.png");
-        formData.append("upload_preset", "zalopay_unsigned");
-
-        const response = await fetch("https://api.cloudinary.com/v1_1/den7ju8t4/image/upload", {
-            method: "POST",
-            body: formData,
-        });
-        return await response.json();
-    }
-
-    shareBtn.forEach(btn => {
-        btn.addEventListener("click", () => {
+    // Gắn 1 listener chung cho tất cả icon Facebook
+    document.body.addEventListener("click", (e) => {
+        if (e.target.classList.contains("group-2")) {
+            // Ẩn 2 màn kết quả 1:1 và 9:16
             document.querySelectorAll(".size, .size-9-16").forEach(section => {
-                section.style.opacity = "0";
-                setTimeout(() => section.style.display = "none", 300);
+                section.style.display = "none";
             });
 
-            const section = finalSection.closest("section");
-            section.style.display = "block";
-            setTimeout(() => section.classList.add("fade-in-up"), 50);
-        });
+            // Hiện màn cuối
+            if (finalSection) {
+                const sec = finalSection.closest("section");
+                sec.style.display = "block";
+                sec.classList.add("fade-in-up");
+            }
+        }
     });
 
-    btnBox.addEventListener("click", async () => {
-        try {
-            const captureDiv = document.querySelector("#capture1 .div");
-            if (!captureDiv) {
-                alert("Không tìm thấy nội dung để chụp ảnh");
-                return;
-            }
+    // Xử lý khi bấm nút ĐẬP HỘP NGAY ở màn cuối
+    if (finalSection) {
+        const btnBox = finalSection.querySelector(".x-c-nh-n-wrapper");
+        if (btnBox) {
+            btnBox.addEventListener("click", async () => {
+                try {
+                    const captureDiv = document.querySelector("#capture1 .div");
+                    if (!captureDiv) {
+                        alert("Không tìm thấy nội dung để chụp ảnh");
+                        return;
+                    }
 
-            await new Promise(r => setTimeout(r, 300));
+                    const canvas = await html2canvas(captureDiv, {
+                        useCORS: true,
+                        allowTaint: true,
+                        scale: 2,
+                    });
 
-            const canvas = await html2canvas(captureDiv, {
-                useCORS: true,
-                allowTaint: true,
-                scale: 2,
+                    const dataURL = canvas.toDataURL("image/png");
+                    if (dataURL === "data:,") throw new Error("canvas trống!");
+
+                    const blob = await (await fetch(dataURL)).blob();
+
+                    // Upload Cloudinary
+                    const formData = new FormData();
+                    formData.append("file", blob, "capture.png");
+                    formData.append("upload_preset", "zalopay_unsigned");
+
+                    const res = await fetch("https://api.cloudinary.com/v1_1/den7ju8t4/image/upload", {
+                        method: "POST",
+                        body: formData,
+                    });
+                    const data = await res.json();
+
+                    if (data.secure_url) {
+                        const shareUrl = encodeURIComponent(data.secure_url);
+                        window.open(
+                            `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
+                            "_blank",
+                            "width=600,height=400"
+                        );
+                    } else {
+                        console.error("Upload fail: ", data);
+                        alert("Chia sẻ không thành công!");
+                    }
+                } catch (err) {
+                    console.error("Lỗi chia sẻ: ", err);
+                    alert("Có lỗi khi chia sẻ!");
+                }
             });
-
-            const dataURL = canvas.toDataURL("image/png");
-            if (dataURL === "data:,") throw new Error("canvas trống!");
-
-            const blob = await (await fetch(dataURL)).blob();
-            const data = await uploadToCloudinary(blob);
-
-            console.log("Cloudinary upload: ", data);
-
-            if (data.secure_url) {
-                const shareUrl = encodeURIComponent(data.secure_url);
-                window.open(
-                    `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
-                    "_blank",
-                    "width=600,height=400"
-                );
-            }else {
-                console.error("Upload fail: ", data);
-                alert("Chia sẻ không thành công, vui lòng thử lại");
-            }
-        }catch (err) {
-            console.error("Lỗi chia sẻ: ", err);
-            alert("có lỗi khi chia sẻ, vui lòng thử lại")
         }
-    })
-})
+    }
+});
+
 
 
 
