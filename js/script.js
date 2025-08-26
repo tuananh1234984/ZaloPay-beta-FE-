@@ -397,8 +397,8 @@ document.querySelectorAll('.size .menu-item:nth-child(3), .size-9-16 .menu-item:
     });
 });
 
-document.addEventListener("DOMContentLoadered", () => {
-    const shareBtn = document.querySelector(".group-2");
+document.addEventListener("DOMContentLoaded", () => {
+    const shareBtn = document.querySelectorAll(".group-2");
     const finalSection = document.querySelector(".giao-din-kt-qu-hin");
     const btnBox = finalSection.querySelector(".x-c-nh-n-wrapper");
 
