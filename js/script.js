@@ -397,74 +397,59 @@ document.querySelectorAll('.size .menu-item:nth-child(3), .size-9-16 .menu-item:
     });
 });
 
-document.querySelectorAll(".group-2").forEach(btn => {
-    btn.addEventListener("click", async () => {
-        try {
-            const name = document.querySelector('.kt-qu-phin-bn-mi .name-label')?.innerText || "";
-            const lastSection = document.querySelector('.giao-din-kt-qu-hin');
+document.addEventListener("DOMContentLoadered", () => {
+    const shareBtn = document.querySelector(".group-2");
+    const finalSection = document.querySelector(".giao-din-kt-qu-hin");
+    const btnBox = finalSection.querySelector(".x-c-nh-n-wrapper");
 
-            if (!lastSection) {
-                alert("Không tìm thấy slide cuối để chụp!");
+    async function uploadToCloudinary(blob) {
+        const formData = new FormData();
+        formData.append("file", blob, "capture.png");
+        formData.append("upload_preset", "zalopay_unsigned");
+
+        const response = await fetch("https://api.cloudinary.com/v1_1/den7ju8t4/image/upload", {
+            method: "POST",
+            body: formData,
+        });
+        return await response.json();
+    }
+
+    shareBtn.forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".size, .size-9-16").forEach(section => {
+                section.style.opacity = "0";
+                setTimeout(() => section.style.display = "none", 300);
+            });
+
+            const section = finalSection.closest("section");
+            section.style.display = "block";
+            setTimeout(() => section.classList.add("fade-in-up"), 50);
+        });
+    });
+
+    btnBox.addEventListener("click", async () => {
+        try {
+            const captureDiv = document.querySelector("#capture1 .div");
+            if (!captureDiv) {
+                alert("Không tìm thấy nội dung để chụp ảnh");
                 return;
             }
 
-            // Hiển thị slide cuối nếu đang ẩn
-            const wasHidden = lastSection.style.display === "none";
-            if (wasHidden) {
-                lastSection.style.display = 'block';
-            }
+            await new Promise(r => setTimeout(r, 300));
 
-            // Render tên + sticker vào slide cuối
-            renderResult(name, selectedStickers);
-
-            // Chờ một chút cho giao diện render xong
-            await new Promise(r => setTimeout(r, 800));
-
-            // Chụp ảnh slide cuối bằng html2canvas
-            const canvas = await html2canvas(lastSection, {
+            const canvas = await html2canvas(captureDiv, {
                 useCORS: true,
-                backgroundColor: null,
-                scale: 2
+                allowTaint: true,
+                scale: 2,
             });
-
-            console.log("Canvas width:", canvas.width, "height:", canvas.height);
 
             const dataURL = canvas.toDataURL("image/png");
-            if (!dataURL.startsWith("data:image/png")) {
-                alert("Không tạo được ảnh từ canvas!");
-                return;
-            }
+            if (dataURL === "data:,") throw new Error("canvas trống!");
 
-            // Tạo Blob chuẩn từ base64
-            const byteString = atob(dataURL.split(',')[1]);
-            const arrayBuffer = new ArrayBuffer(byteString.length);
-            const intArray = new Uint8Array(arrayBuffer);
-            for (let i = 0; i < byteString.length; i++) {
-                intArray[i] = byteString.charCodeAt(i);
-            }
-            const blob = new Blob([intArray], { type: "image/png" });
+            const blob = await (await fetch(dataURL)).blob();
+            const data = await uploadToCloudinary(blob);
 
-            console.log("Blob size:", blob.size);
-
-            if (blob.size === 0) {
-                alert("Ảnh bị rỗng! Kiểm tra phần tử HTML cần chụp.");
-                return;
-            }
-
-            // Upload lên Cloudinary
-            const formData = new FormData();
-            formData.append("file", blob, "capture.png");
-            formData.append("upload_preset", "zalopay_unsigned");
-
-            console.log("Upload preset:", formData.get("upload_preset"));
-
-            const response = await fetch("https://api.cloudinary.com/v1_1/den7ju8t4/image/upload", {
-                method: "POST",
-                body: formData
-            });
-
-            const data = await response.json();
-            console.log("Cloudinary response:", data);
+            console.log("Cloudinary upload: ", data);
 
             if (data.secure_url) {
                 const shareUrl = encodeURIComponent(data.secure_url);
@@ -473,20 +458,17 @@ document.querySelectorAll(".group-2").forEach(btn => {
                     "_blank",
                     "width=600,height=400"
                 );
-
-                // Ẩn slide cuối nếu ban đầu ẩn
-                if (wasHidden) {
-                    lastSection.style.display = 'none';
-                }
-            } else {
-                alert("Chia sẻ không thành công: " + (data.error?.message || "Lỗi không xác định"));
+            }else {
+                console.error("Upload fail: ", data);
+                alert("Chia sẻ không thành công, vui lòng thử lại");
             }
-        } catch (err) {
-            console.error("Lỗi chia sẻ:", err);
-            alert("Có lỗi khi chia sẻ, vui lòng thử lại");
+        }catch (err) {
+            console.error("Lỗi chia sẻ: ", err);
+            alert("có lỗi khi chia sẻ, vui lòng thử lại")
         }
-    });
-});
+    })
+})
+
 
 
 document.addEventListener("DOMContentLoaded", () => {
