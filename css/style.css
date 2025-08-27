@@ -2811,7 +2811,114 @@ button .x-c-nh-n {
     background-color: #ffffff;
 }
 
+.empty {
+    background-color: #ffffff;
+    display: grid;
+    justify-items: center;
+    align-items: start;
+    width: 100vw;
+}
 
+.empty .div {
+    background-color: #ffffff;
+    width: 390px;
+    height: 844px;
+    position: relative;
+}
 
+.empty .overlap-group {
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    top: 162px;
+    left: 65px;
+    background-image: url('../assets/img/layer.png');
+    background-size: 100% 100%;
+}
+
+.empty .layer {
+    width: 14px;
+    height: 16px;
+    top: 139px;
+    left: 153px;
+    position: absolute;
+    background-image: url(../assets/img/layer-z.png);
+    background-size: 100% 100%;
+}
+
+.empty .layer-2 {
+    width: 19px;
+    height: 22px;
+    top: 114px;
+    left: 169px;
+    position: absolute;
+    background-image: url(../assets/img/layer-z.png);
+    background-size: 100% 100%;
+}
+
+.empty .layer-3 {
+    width: 27px;
+    height: 31px;
+    top: 98px;
+    left: 193px;
+    position: absolute;
+    background-image: url(../assets/img/layer-z.png);
+    background-size: 100% 100%;
+}
+
+.empty .text-wrapper {
+    position: absolute;
+    top: 474px;
+    left: 147px;
+    font-family: "Aeonik Pro-Bold", Helvetica;
+    font-weight: 700;
+    color: #0033c9;
+    font-size: 35px;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+}
+
+.empty .loi-mot-chut {
+    position: absolute;
+    width: 306px;
+    top: 583px;
+    left: 42px;
+    font-family: "Aeonik Pro-Bold", Helvetica;
+    font-weight: 400;
+    color: #b3b3b3;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+}
+
+.empty .group {
+    position: absolute;
+    width: 188px;
+    height: 43px;
+    top: 742px;
+    left: 101px;
+}
+
+.empty .x-c-nh-wrapper {
+    position: relative;
+    height: 43px;
+    background-color: #09cd6b;
+    border-radius: 30px;
+}
+
+.empty .x-c-nh-n {
+    position: absolute;
+    top: 9px;
+    left: 42px;
+    font-family: "Aeonik Pro-Bold", Helvetica;
+    font-weight: 700;
+    color: #ffffffff;
+    font-size: 20px;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+    white-space: nowrap;
+}
 
 
