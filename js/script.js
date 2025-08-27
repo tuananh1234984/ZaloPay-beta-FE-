@@ -473,9 +473,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Khi bấm "Đập hộp ngay" ở màn hình ---
     if (finalSection) {
-        const btnBox = finalSSection.querySelector(".x-c-nh-n-wrapper");
+        const btnBox = finalSection.querySelector(".x-c-nh-n-wrapper");
         if (btnBox) {
-            btnBox.addEventLister("click", () => {
+            btnBox.addEventListener("click", () => {
                 //Ẩn hết
                 sections.forEach(sec => sec.style.display = "none");
                 // Quay về slide đầu
