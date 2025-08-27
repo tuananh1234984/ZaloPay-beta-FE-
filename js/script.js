@@ -428,7 +428,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (btnBox) {
             btnBox.addEventListener("click", async () => {
                 try {
-                    const captureDiv = document.querySelector("#capture1 .div");
+                    const captureDiv = finalSection
                     if (!captureDiv) {
                         alert("Không tìm thấy nội dung để chụp ảnh");
                         return;
@@ -438,6 +438,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         useCORS: true,
                         allowTaint: true,
                         scale: 2,
+                        backgroundColor: null
                     });
 
                     const dataURL = canvas.toDataURL("image/png");
