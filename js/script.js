@@ -398,84 +398,89 @@ document.querySelectorAll('.size .menu-item:nth-child(3), .size-9-16 .menu-item:
     });
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-    const finalSection = document.querySelector("#capture1").closest("section");
+document.addEventLister("DOMContentLoaded", () => {
+    const sections = document.querySelectorAll("section");
+    const firstSection = section[0];
+    const finalSection = document.querySelector("#capture1")?.closest("section");
 
-    // Icon Facebook share
+    //--1 Kiểm tra URL khi load
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("share") === "1" && finalSection) {
+        // Ẩn hết
+        sections.forEach(sec => sec.style.display = "none");
+        // Hiện slide cuối
+        finalSection.style.display = "block";
+        finalSection.classList.add("fade-in-up");
+    }
+
+    // --- Xử lý khi bấm chia sẻ ( ở màn 1:1 hoặc 9:16) ---
     document.querySelectorAll(
         ".size .group-2, .size-9-16 .group-2, .mn-hinh-hin-ra-chia-se .group-2, .mn-hinh-hin-ra-chia-se-9-16 .group-2"
     ).forEach(icon => {
-        icon.addEventListener("click", () => {
-            // Ẩn hết màn share
-            document.querySelectorAll(".size, .size-9-16, .mn-hinh-hin-ra-chia-se, .mn-hinh-hin-ra-chia-se-9-16")
-                .forEach(sec => sec.style.display = "none");
+        icon.addEvenListener("click", async () => {
+            try {
+                const currentSection = icon.closest(".size, size-9-16");
+                const captureTarget = currentSection?.querySelector(".overlap");
+                if (!captureTarget) {
+                    alert("không tìm thấy nội dung để chụp ảnh");
+                    showErrorSlide();
+                    return;
+                }
 
-            // Hiện màn cuối
-            finalSection.style.display = "block";
-            finalSection.classList.add("fade-in-up");
+                const canvas = await html2canvas(captureTarget, {
+                    useCORS: true,
+                    allowTaint: true,
+                    scale: 2,
+                    backgroundColor: "#ffffff"
+                });
 
-            // Render lại tên + sticker đã chọn
-            renderResult(
-                document.querySelector(".kt-qu-phin-bn-mi .name-label")?.innerText || "",
-                selectedStickers
-            );
+                const dataURL = canvas.toDataURL("image/png");
+                if (dataURL === "data:,") throw new Error("canvas trống!");
+
+                const blob = await (await fetch(dataURL)).blob();
+
+                //Upload Cloudinary
+                const formData = new FormData()
+                formData.append("file", blob, "capture.png");
+                formData.append("upload_preset", "zalopay_unsigned");
+
+                const res = await fetch("https://api.cloudinary.com/v1_1/den7ju8t4/image/upload", {
+                    method: "POST",
+                    body: formData,
+                });
+                const data = await res.json();
+
+                if (data.secure_url) {
+                    //Gắn query vào link web
+                    const linkWithQuery = `${window.location.origin}${window.location.pathname}$share=1`;
+
+                    const shareUrl = encodeURIComponent(linkWithQuery);
+                    window.open(
+                        `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
+                        "_blank",
+                        "width=600, height=400"
+                    );
+                }else {
+                    console.error("Upload fail: ", data);
+                    showErrorSlide();
+                }
+            }catch (err) {
+                console.error("lỗi chia sẻ: ", err);
+                showErrorSlide();
+            }
         });
     });
 
-    // Xử lý khi bấm nút ĐẬP HỘP NGAY ở màn cuối
+    // Khi bấm "Đập hộp ngay" ở màn hình ---
     if (finalSection) {
-        const btnBox = finalSection.querySelector(".x-c-nh-n-wrapper");
+        const btnBox = finalSSection.querySelector(".x-c-nh-n-wrapper");
         if (btnBox) {
-            btnBox.addEventListener("click", async () => {
-                try {
-                    const captureDiv = document.querySelector("#capture1 .div");
-                    if (!captureDiv) {
-                        alert("Không tìm thấy nội dung để chụp ảnh");
-                        return;
-                    }
-
-                    const canvas = await html2canvas(captureDiv, {
-                        useCORS: true,
-                        allowTaint: true,
-                        width: 390,
-                        height: 844,
-                        windowWidth: 390,
-                        windowHeight: 844,
-                        scale: 2,
-                        backgroundColor: "#ffffff" 
-                    });
-
-                    const dataURL = canvas.toDataURL("image/png");
-                    if (dataURL === "data:,") throw new Error("canvas trống!");
-
-                    const blob = await (await fetch(dataURL)).blob();
-
-                    // Upload Cloudinary
-                    const formData = new FormData();
-                    formData.append("file", blob, "capture.png");
-                    formData.append("upload_preset", "zalopay_unsigned");
-
-                    const res = await fetch("https://api.cloudinary.com/v1_1/den7ju8t4/image/upload", {
-                        method: "POST",
-                        body: formData,
-                    });
-                    const data = await res.json();
-
-                    if (data.secure_url) {
-                        const shareUrl = encodeURIComponent(data.secure_url);
-                        window.open(
-                            `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
-                            "_blank",
-                            "width=600,height=400"
-                        );
-                    } else {
-                        console.error("Upload fail: ", data);
-                        alert("Chia sẻ không thành công!");
-                    }
-                } catch (err) {
-                    console.error("Lỗi chia sẻ: ", err);
-                    alert("Có lỗi khi chia sẻ!");
-                }
+            btnBox.addEventLister("click", () => {
+                //Ẩn hết
+                sections.forEach(sec => sec.style.display = "none");
+                // Quay về slide đầu
+                firstSection.style.display = "block";
+                firstSection.classList.add("fade-in-up");
             });
         }
     }
@@ -506,6 +511,28 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+
+//---- HÀM HIỂN THỊ SLIDE LỖI ---//
+function showErrorSlide(message) {
+    // Ẩn tất cả section đang hiển thị
+    document.querySelectorAll("section").forEach(sec => {
+        sec.style.display = "none";
+    });
+
+    const errorSlide = document.querySelector(".empty")?.closest("section");
+    if (errorSlide) {
+        errorSlide.style.display = "block";
+        errorSlide.classList.add("fade-in-up");
+
+        //Gắn sự kiện cho nút "Thử lại"
+        const retryBtn = errorSlide.querySelector(".x-c-nh-wrapper");
+        if (retryBtn) {
+            retryBtn.onclick = () => {
+                window.location.reload(); // reload lại trang
+            }
+        }
+    }
+}
 
 
 
