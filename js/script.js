@@ -426,7 +426,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     showErrorSlide();
                     return;
                 }
-
+                // Chuẩn bị Canvas
                 const canvas = await html2canvas(captureTarget, {
                     useCORS: true,
                     allowTaint: true,
