@@ -437,6 +437,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     const canvas = await html2canvas(captureDiv, {
                         useCORS: true,
                         allowTaint: true,
+                        width: 390,
+                        height: 844,
+                        windowWidth: 390,
+                        windowHeight: 844,
                         scale: 2,
                     });
 
