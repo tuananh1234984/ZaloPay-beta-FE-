@@ -198,7 +198,8 @@ function renderResult(name, stickers) {
         document.querySelector('.size'),
         document.querySelector('.size-9-16'),
         document.querySelector('.mn-hinh-hin-ra-chia-se'),
-        document.querySelector('.mn-hinh-hin-ra-chia-se-9-16')
+        document.querySelector('.mn-hinh-hin-ra-chia-se-9-16'),
+        document.querySelector('.giao-din-kt-qu-hin')
     ];
     containers.forEach(container => {
         if (!container) return;
@@ -398,24 +399,27 @@ document.querySelectorAll('.size .menu-item:nth-child(3), .size-9-16 .menu-item:
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    const sections = document.querySelectorAll("section");
-    const finalSection = document.querySelector(".giao-din-kt-qu-hin");
+    const finalSection = document.querySelector("#capture1").closest("section");
 
-    // Gắn 1 listener chung cho tất cả icon Facebook
-    document.body.addEventListener("click", (e) => {
-        if (e.target.classList.contains("group-2")) {
-            // Ẩn 2 màn kết quả 1:1 và 9:16
-            document.querySelectorAll(".size, .size-9-16").forEach(section => {
-                section.style.display = "none";
-            });
+    // Icon Facebook share
+    document.querySelectorAll(
+        ".size .group-2, .size-9-16 .group-2, .mn-hinh-hin-ra-chia-se .group-2, .mn-hinh-hin-ra-chia-se-9-16 .group-2"
+    ).forEach(icon => {
+        icon.addEventListener("click", () => {
+            // Ẩn hết màn share
+            document.querySelectorAll(".size, .size-9-16, .mn-hinh-hin-ra-chia-se, .mn-hinh-hin-ra-chia-se-9-16")
+                .forEach(sec => sec.style.display = "none");
 
             // Hiện màn cuối
-            if (finalSection) {
-                const sec = finalSection.closest("section");
-                sec.style.display = "block";
-                sec.classList.add("fade-in-up");
-            }
-        }
+            finalSection.style.display = "block";
+            finalSection.classList.add("fade-in-up");
+
+            // Render lại tên + sticker đã chọn
+            renderResult(
+                document.querySelector(".kt-qu-phin-bn-mi .name-label")?.innerText || "",
+                selectedStickers
+            );
+        });
     });
 
     // Xử lý khi bấm nút ĐẬP HỘP NGAY ở màn cuối
