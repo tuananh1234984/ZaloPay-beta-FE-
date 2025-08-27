@@ -2802,6 +2802,15 @@ button .x-c-nh-n {
     white-space: nowrap;;
 }
 
+.giao-din-kt-qu-hin #capture1 {
+    width: 390px;
+    height: 844px;
+    overflow: hidden;
+    margin: 0 auto;
+    position: relative;
+    background-color: #ffffff;
+}
+
 
 
 
