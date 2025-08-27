@@ -438,7 +438,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         useCORS: true,
                         allowTaint: true,
                         scale: 2,
-                        backgroundColor: null
                     });
 
                     const dataURL = canvas.toDataURL("image/png");
