@@ -442,6 +442,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         windowWidth: 390,
                         windowHeight: 844,
                         scale: 2,
+                        backgroundColor: "#ffffff"
                     });
 
                     const dataURL = canvas.toDataURL("image/png");
