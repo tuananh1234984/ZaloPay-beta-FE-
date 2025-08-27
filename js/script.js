@@ -400,7 +400,7 @@ document.querySelectorAll('.size .menu-item:nth-child(3), .size-9-16 .menu-item:
 
 document.addEventListener("DOMContentLoaded", () => {
     const sections = document.querySelectorAll("section");
-    const firstSection = section[0];
+    const firstSection = sections[0];
     const finalSection = document.querySelector("#capture1")?.closest("section");
 
     //--1 Kiểm tra URL khi load
