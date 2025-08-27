@@ -417,7 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(
         ".size .group-2, .size-9-16 .group-2, .mn-hinh-hin-ra-chia-se .group-2, .mn-hinh-hin-ra-chia-se-9-16 .group-2"
     ).forEach(icon => {
-        icon.addEvenListener("click", async () => {
+        icon.addEventListener("click", async () => {
             try {
                 const currentSection = icon.closest(".size, size-9-16");
                 const captureTarget = currentSection?.querySelector(".overlap");
