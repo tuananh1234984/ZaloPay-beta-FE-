@@ -1,7 +1,10 @@
 {
-    "name": "zalopay-share",
-    "version": "1.0.0",
-    "scripts": {
-        "start": "vercel dev"
-    }
+  "builds": [
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "api/**/*.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1.js" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
 }
