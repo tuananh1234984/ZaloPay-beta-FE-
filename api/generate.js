@@ -1,5 +1,5 @@
 export default function handler(req, res) {
-    const { name, size, image } = req.query;
+    const { name, size, image, stickers } = req.query;
 
   // Ảnh mặc định fallback
     const defaultImage =
@@ -18,7 +18,7 @@ export default function handler(req, res) {
             <meta charset="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Kết quả ZaloPay</title>
-            <link rel="stylesheet" href="./css/style.css" />
+            <link rel="stylesheet" href="/css/style.css" />
         </head>
         <body>
         <section>
