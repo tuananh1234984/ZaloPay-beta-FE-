@@ -18,14 +18,14 @@ export default function handler(req, res) {
             <meta charset="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Kết quả ZaloPay</title>
-            <link rel="stylesheet" href="/css/style.css" />
+            <link rel="stylesheet" href="./css/style.css" />
         </head>
         <body>
         <section>
             <div class="giao-din-kt-qu-hin">
                 <div class="div">
                     <div class="overlap">
-                    <img class="vector" src="/assets/img/Vector-2.png" />
+                    <img class="vector" src="./assets/img/Vector-2.png" />
                         <div class="group">
                             <div class="name-label text-wrapper">${name || "Bạn"}</div>
                             <div class="text-wrapper-2">Phiên bản mới</div>
