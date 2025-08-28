@@ -419,8 +419,9 @@ document.addEventListener("DOMContentLoaded", () => {
     ).forEach(icon => {
         icon.addEventListener("click", async () => {
             try {
-                const currentSection = icon.closest(".size, size-9-16");
-                const captureTarget = currentSection?.querySelector(".overlap");
+                const currentSection = icon.closest(".size, .size-9-16, .mn-hinh-hin-ra-chia-se, .mn-hinh-hin-ra-chia-se-9-16");
+                const captureTarget = currentSection?.querySelector(".overlap") || currentSection.querySelector(".div");
+
                 if (!captureTarget) {
                     alert("không tìm thấy nội dung để chụp ảnh");
                     showErrorSlide();
@@ -452,7 +453,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (data.secure_url) {
                     //Gắn query vào link web
-                    const linkWithQuery = `${window.location.origin}${window.location.pathname}$share=1`;
+                    const linkWithQuery = `${window.location.origin}${window.location.pathname}?share=1`;
 
                     const shareUrl = encodeURIComponent(linkWithQuery);
                     window.open(
