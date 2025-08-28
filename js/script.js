@@ -401,19 +401,8 @@ document.querySelectorAll('.size .menu-item:nth-child(3), .size-9-16 .menu-item:
 document.addEventListener("DOMContentLoaded", () => {
     const sections = document.querySelectorAll("section");
     const firstSection = sections[0];
-    const finalSection = document.querySelector("#capture1")?.closest("section");
 
-    //--1 Kiểm tra URL khi load
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("share") === "1" && finalSection) {
-        // Ẩn hết
-        sections.forEach(sec => sec.style.display = "none");
-        // Hiện slide cuối
-        finalSection.style.display = "block";
-        finalSection.classList.add("fade-in-up");
-    }
-
-    // --- Xử lý khi bấm chia sẻ ( ở màn 1:1 hoặc 9:16) ---
+    // --- Xử lý khi bấm chia sẻ (ở màn 1:1 hoặc 9:16) ---
     document.querySelectorAll(
         ".size .group-2, .size-9-16 .group-2, .mn-hinh-hin-ra-chia-se .group-2, .mn-hinh-hin-ra-chia-se-9-16 .group-2"
     ).forEach(icon => {
@@ -427,7 +416,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     showErrorSlide();
                     return;
                 }
-                // Chuẩn bị Canvas
+
+                // Chụp canvas
                 const canvas = await html2canvas(captureTarget, {
                     useCORS: true,
                     allowTaint: true,
@@ -440,8 +430,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const blob = await (await fetch(dataURL)).blob();
 
-                //Upload Cloudinary
-                const formData = new FormData()
+                // Upload Cloudinary
+                const formData = new FormData();
                 formData.append("file", blob, "capture.png");
                 formData.append("upload_preset", "zalopay_unsigned");
 
@@ -452,8 +442,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 const data = await res.json();
 
                 if (data.secure_url) {
-                    //Gắn query vào link web
-                    const linkWithQuery = `${window.location.origin}${window.location.pathname}?share=1`;
+                    // Giả sử bạn có biến lưu tên và sticker (hoặc lấy từ UI)
+                    const name = document.querySelector(".input-field")?.value || "Bạn";
+                    const selectedStickers = Array.from(document.querySelectorAll(".sticker.selected"))
+                        .map(el => el.getAttribute("src"))
+                        .join(",");
+
+                    // Tạo link backend generate
+                    const linkWithQuery = `${window.location.origin}/api/generate?name=${encodeURIComponent(name)}&stickers=${encodeURIComponent(selectedStickers)}&img=${encodeURIComponent(data.secure_url)}`;
 
                     const shareUrl = encodeURIComponent(linkWithQuery);
                     window.open(
@@ -461,33 +457,27 @@ document.addEventListener("DOMContentLoaded", () => {
                         "_blank",
                         "width=600, height=400"
                     );
-                }else {
+                } else {
                     console.error("Upload fail: ", data);
                     showErrorSlide();
                 }
-            }catch (err) {
+            } catch (err) {
                 console.error("lỗi chia sẻ: ", err);
                 showErrorSlide();
             }
         });
     });
 
-    // Khi bấm "Đập hộp ngay" ở màn hình ---
-    if (finalSection) {
-        const btnBox = finalSection.querySelector(".x-c-nh-n-wrapper");
-        if (btnBox) {
-            btnBox.addEventListener("click", () => {
-                //Ẩn hết
-                sections.forEach(sec => sec.style.display = "none");
-                // Quay về slide đầu
-                firstSection.style.display = "block";
-                firstSection.classList.add("fade-in-up");
-            });
-        }
+    // --- Khi bấm "Đập hộp ngay" quay lại màn đầu ---
+    const finalBtn = document.querySelector(".giao-din-kt-qu-hin .x-c-nh-n-wrapper");
+    if (finalBtn) {
+        finalBtn.addEventListener("click", () => {
+            sections.forEach(sec => sec.style.display = "none");
+            firstSection.style.display = "block";
+            firstSection.classList.add("fade-in-up");
+        });
     }
 });
-
-
 
 
 document.addEventListener("DOMContentLoaded", () => {
