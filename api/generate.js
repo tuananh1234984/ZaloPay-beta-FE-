@@ -1,4 +1,4 @@
-export default function handler(req, res) {
+module.exports = function handler(req, res) {
     // Accept params from query string
     const { name = "", size = "1-1", image, img, stickers = "" } = req.query;
 
