@@ -74,6 +74,7 @@ btnNext.onclick = function() {
 /* ------------------ CHỌN STICKER TỐI ĐA 3 + DẤU TÍCH ------------------ */
 // Giới hạn chọn tối đa 3 sticker + thêm dấu tích riêng
 let selectedStickers = []; // Thêm biến lưu sticker đã chọn
+window.selectedStickers = selectedStickers;
 
 (function () {
     const grid = document.querySelector(".group-5");
@@ -155,6 +156,7 @@ let selectedStickers = []; // Thêm biến lưu sticker đã chọn
 
             // Cập nhật biến selectedStickers mỗi lần chọn
             selectedStickers = Array.from(selected).map(idx => stickers[idx].src);
+            window.selectedStickers = selectedStickers;
         });
     });
 })();
@@ -174,6 +176,7 @@ btnLimit.onclick = function() {
         return stickers[tick.dataset.for].src;
     });
     selectedStickers = selected;
+    window.selectedStickers = selectedStickers;
 
     // Quay lại slide nhập tên
     sections[2].classList.add('slide-out');
