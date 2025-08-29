@@ -442,14 +442,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 const data = await res.json();
 
                 if (data.secure_url) {
-                    // Giả sử bạn có biến lưu tên và sticker (hoặc lấy từ UI)
+                    // Lấy tên và danh sách sticker đã chọn từ biến toàn cục
                     const name = document.querySelector(".input-field")?.value || "Bạn";
-                    const selectedStickers = Array.from(document.querySelectorAll(".sticker.selected"))
-                        .map(el => el.getAttribute("src"))
+                    const stickersParam = (Array.isArray(window.selectedStickers) ? window.selectedStickers : [])
                         .join(",");
 
-                    // Tạo link backend generate
-                    const linkWithQuery = `${window.location.origin}/api/generate?name=${encodeURIComponent(name)}&stickers=${encodeURIComponent(selectedStickers)}&img=${encodeURIComponent(data.secure_url)}`;
+                    // Tạo link backend generate (ưu tiên domain production để FB scrape đúng)
+                    const prodBase = "https://zalo-pay-beta.vercel.app";
+                    const base = /localhost|127\.0\.0\.1/.test(window.location.origin)
+                        ? prodBase
+                        : window.location.origin;
+                    const linkWithQuery = `${base}/api/generate?name=${encodeURIComponent(name)}&stickers=${encodeURIComponent(stickersParam)}&img=${encodeURIComponent(data.secure_url)}`;
 
                     const shareUrl = encodeURIComponent(linkWithQuery);
                     window.open(
