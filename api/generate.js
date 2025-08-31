@@ -1,6 +1,6 @@
 module.exports = function handler(req, res) {
     // Accept params from query string; prefer tagline from client to keep consistency
-    const { name = "", size = "1-1", image, img, stickers = "", tagline = "", tag = "" } = req.query;
+    const { name = "", size = "1-1", image, img, stickers = "", tagline = "", tag = "", iw, ih } = req.query;
 
     // Basic HTML escape to avoid injection in server-rendered page
     const escapeHtml = (v) => String(v)
@@ -18,6 +18,11 @@ module.exports = function handler(req, res) {
 
     // Ảnh dùng cho preview Facebook (meta og:image)
     const imageUrl = image || img || defaultImage;
+
+    // Build full request URL for og:url (helps FB cache the exact page)
+    const proto = req.headers['x-forwarded-proto'] || 'https';
+    const host = req.headers['x-forwarded-host'] || req.headers.host;
+    const fullUrl = `${proto}://${host}${req.url}`;
 
     // Danh sách sticker: nếu không có thì dùng sticker mặc định trong public/assets/icons
     const stickerList = String(stickers)
@@ -107,6 +112,19 @@ module.exports = function handler(req, res) {
                 <meta property="og:title" content="${safeName} - Phiên bản mới ZaloPay" />
                 <meta property="og:description" content="Phiên bản này quá đã. Bạn đã đập hộp chưa?" />
                 <meta property="og:image" content="${imageUrl}" />
+                <meta property="og:image:secure_url" content="${imageUrl}" />
+                ${(() => {
+                    const w = parseInt(iw, 10);
+                    const h = parseInt(ih, 10);
+                    if (!isNaN(w) && !isNaN(h) && w > 0 && h > 0) {
+                        return `<meta property=\"og:image:width\" content=\"${w}\" />\n<meta property=\"og:image:height\" content=\"${h}\" />`;
+                    }
+                    return size === "9-16"
+                        ? `<meta property=\"og:image:width\" content=\"1080\" />\n<meta property=\"og:image:height\" content=\"1920\" />`
+                        : `<meta property=\"og:image:width\" content=\"1200\" />\n<meta property=\"og:image:height\" content=\"1200\" />`;
+                })()}
+                <meta property="og:image:alt" content="Kết quả ZaloPay của ${safeName}" />
+                <meta property="og:url" content="${fullUrl}" />
                 <meta property="twitter:card" content="summary_large_image" />
                 <meta property="twitter:image" content="${imageUrl}" />
                 <link rel="preload" as="image" href="/assets/img/Vector-2.png" />
