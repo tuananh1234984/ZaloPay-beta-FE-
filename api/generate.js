@@ -49,9 +49,9 @@ module.exports = function handler(req, res) {
 
     const safeName = escapeHtml(name || "Bạn");
 
-    // Card fragments for 1:1 and 9:16 (no section wrapper)
-    const cardOneOne = `
-        <div class="size">
+    // Share-screen fragments for 1:1 and 9:16 (match index.html structure)
+    const shareOneOne = `
+        <div class="mn-hinh-hin-ra-chia-se">
             <div class="div">
                 <div class="overlap">
                     <img class="vector" src="/assets/img/Vector-2.png" />
@@ -63,11 +63,16 @@ module.exports = function handler(req, res) {
                         ${toRender[2] ? `<img class=\"icon-2\" src=\"${toRender[2]}\" alt=\"Sticker 3\" />` : ""}
                     </div>
                 </div>
+                <div class="chia-s-ngay-phi-n-b-wrapper">
+                    <p class="chia-s-ngay-phi-n-b">Chia sẻ ngay<br/>phiên bản mới hook hồn của bạn</p>
+                </div>
+                <img class="group-2" src="/assets/icons/Group-23.png" />
+                <div class="div-wrapper"><p class="p">Làm quen với ZaloPay mới nha</p></div>
             </div>
         </div>`;
 
-    const cardNineSixteen = `
-        <div class="size-9-16">
+    const shareNineSixteen = `
+        <div class="mn-hinh-hin-ra-chia-se-9-16">
             <div class="div">
                 <div class="overlap">
                     <div class="group-wrapper">
@@ -81,10 +86,15 @@ module.exports = function handler(req, res) {
                         </div>
                     </div>
                 </div>
+                <div class="chia-s-ngay-phi-n-b-wrapper">
+                    <p class="chia-s-ngay-phi-n-b">Chia sẻ ngay<br/>phiên bản mới hook hồn của bạn</p>
+                </div>
+                <img class="group-2" src="/assets/icons/Group-23.png" />
+                <div class="div-wrapper"><p class="p">Làm quen với ZaloPay mới nha</p></div>
             </div>
         </div>`;
 
-    const cardBody = size === "9-16" ? cardNineSixteen : cardOneOne;
+    const shareBody = size === "9-16" ? shareNineSixteen : shareOneOne;
 
     const ogHtml = `
         <!DOCTYPE html>
@@ -107,17 +117,7 @@ module.exports = function handler(req, res) {
             </head>
             <body>
                 <section>
-                    <div class="giao-din-kt-qu-hin">
-                        <div class="div">
-                            ${cardBody}
-                            <p class="phi-n-b-n-n-y-qu-b-n">Phiên bản này quá đã<br/>Bạn đã đập hộp chưa?</p>
-                            <div class="group-wrapper">
-                                <div class="x-c-nh-n-wrapper" role="button" tabindex="0" onclick="window.location.href='/'" onkeydown="if(event.key==='Enter'||event.key===' '){window.location.href='/' }">
-                                    <div class="x-c-nh-n">ĐẬP HỘP NGAY</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    ${shareBody}
                 </section>
             </body>
         </html>`;

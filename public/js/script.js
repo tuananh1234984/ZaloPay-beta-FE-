@@ -490,9 +490,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     // Tạo link backend generate (ưu tiên domain production để FB scrape đúng)
                     const prodBase = "https://zalo-pay-beta.vercel.app";
-                    const base = /localhost|127\.0\.0\.1/.test(window.location.origin)
-                        ? prodBase
-                        : window.location.origin;
+                    // Luôn dùng domain production khi chia sẻ để FB có thể truy cập (tránh các preview/private URL)
+                    const base = prodBase;
                     // Determine current size (1-1 or 9-16) from the section context
                     let currentSize = "1-1";
                     if (currentSection?.classList.contains("size-9-16") || currentSection?.classList.contains("mn-hinh-hin-ra-chia-se-9-16")) {
