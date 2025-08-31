@@ -493,7 +493,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     const base = /localhost|127\.0\.0\.1/.test(window.location.origin)
                         ? prodBase
                         : window.location.origin;
-                    const linkWithQuery = `${base}/api/generate?name=${encodeURIComponent(name)}&stickers=${encodeURIComponent(stickersParam)}&img=${encodeURIComponent(data.secure_url)}`;
+                    // Determine current size (1-1 or 9-16) from the section context
+                    let currentSize = "1-1";
+                    if (currentSection?.classList.contains("size-9-16") || currentSection?.classList.contains("mn-hinh-hin-ra-chia-se-9-16")) {
+                        currentSize = "9-16";
+                    }
+
+                    const linkWithQuery = `${base}/api/generate?name=${encodeURIComponent(name)}&size=${encodeURIComponent(currentSize)}&stickers=${encodeURIComponent(stickersParam)}&img=${encodeURIComponent(data.secure_url)}`;
 
                     const shareUrl = encodeURIComponent(linkWithQuery);
                     window.open(
