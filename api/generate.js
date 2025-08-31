@@ -23,8 +23,6 @@ module.exports = function handler(req, res) {
     const proto = req.headers['x-forwarded-proto'] || 'https';
     const host = req.headers['x-forwarded-host'] || req.headers.host;
     const fullUrl = `${proto}://${host}${req.url}`;
-    const origin = `${proto}://${host}`;
-    const localFallbackImage = `${origin}/assets/img/ZZ.png`;
 
     // Danh sách sticker: nếu không có thì dùng sticker mặc định trong public/assets/icons
     const stickerList = String(stickers)
@@ -111,12 +109,9 @@ module.exports = function handler(req, res) {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <title>Kết quả ZaloPay</title>
                 <meta property="og:type" content="website" />
-                <meta property="og:site_name" content="ZaloPay" />
-                <meta property="og:locale" content="vi_VN" />
                 <meta property="og:title" content="${safeName} - Phiên bản mới ZaloPay" />
                 <meta property="og:description" content="Phiên bản này quá đã. Bạn đã đập hộp chưa?" />
                 <meta property="og:image" content="${imageUrl}" />
-                <meta property="og:image" content="${localFallbackImage}" />
                 <meta property="og:image:secure_url" content="${imageUrl}" />
                 ${(() => {
                     const w = parseInt(iw, 10);
@@ -133,7 +128,6 @@ module.exports = function handler(req, res) {
                 <meta property="twitter:card" content="summary_large_image" />
                 <meta property="twitter:image" content="${imageUrl}" />
                 <link rel="preload" as="image" href="/assets/img/Vector-2.png" />
-                <link rel="canonical" href="${fullUrl}" />
                 <!-- Load site styles from /public/css so classes render correctly under /api/* -->
                 <link rel="stylesheet" href="/css/styleguile.css" />
                 <link rel="stylesheet" href="/css/style.css" />
@@ -146,8 +140,6 @@ module.exports = function handler(req, res) {
             </body>
         </html>`;
 
-    res.setHeader("Content-Type", "text/html; charset=utf-8");
-    res.setHeader("Cache-Control", "public, max-age=0, s-maxage=600");
-    res.setHeader("X-Robots-Tag", "all");
+    res.setHeader("Content-Type", "text/html");
     res.status(200).send(ogHtml);
 }
