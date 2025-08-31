@@ -37,7 +37,47 @@ module.exports = function handler(req, res) {
     ];
     const chosenTag = TAGLINES[Math.floor(Math.random() * TAGLINES.length)];
 
-    // HTML: chỉ render UI giống mock, KHÔNG hiển thị ảnh đã upload trong body
+    // Templates for 1:1 and 9:16 bodies (only UI card; no uploaded image in body)
+    const bodyOneOne = `
+        <section>
+            <div class="size">
+                <div class="div">
+                    <div class="overlap">
+                        <img class="vector" src="/assets/img/Vector-2.png" />
+                        <div class="group">
+                            <div class="name-label text-wrapper">${name || "Bạn"}</div>
+                            <div class="text-wrapper-2">${chosenTag}</div>
+                            ${toRender[0] ? `<img class="icon" src="${toRender[0]}" alt="Sticker 1" />` : ""}
+                            ${toRender[1] ? `<img class="img" src="${toRender[1]}" alt="Sticker 2" />` : ""}
+                            ${toRender[2] ? `<img class=\"icon-2\" src=\"${toRender[2]}\" alt=\"Sticker 3\" />` : ""}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>`;
+
+    const bodyNineSixteen = `
+        <section>
+            <div class="size-9-16">
+                <div class="div">
+                    <div class="overlap">
+                        <div class="group-wrapper">
+                            <img class="vector" src="/assets/img/Vector-2.png" />
+                            <div class="group">
+                                <div class="name-label text-wrapper">${name || "Bạn"}</div>
+                                <div class="text-wrapper-2">${chosenTag}</div>
+                                ${toRender[0] ? `<img class="icon" src="${toRender[0]}" alt="Sticker 1" />` : ""}
+                                ${toRender[1] ? `<img class="img" src="${toRender[1]}" alt="Sticker 2" />` : ""}
+                                ${toRender[2] ? `<img class=\"icon-2\" src=\"${toRender[2]}\" alt=\"Sticker 3\" />` : ""}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>`;
+
+    const pageBody = size === "9-16" ? bodyNineSixteen : bodyOneOne;
+
     const ogHtml = `
         <!DOCTYPE html>
         <html lang="vi">
@@ -58,31 +98,14 @@ module.exports = function handler(req, res) {
                 <link rel="stylesheet" href="/css/global.css" />
             </head>
             <body>
-                <section>
-                    <div class="giao-din-kt-qu-hin">
-                        <div class="div">
-                            <div class="overlap">
-                                <img class="vector" src="/assets/img/Vector-2.png" />
-                                <div class="group">
-                                    <div class="name-label text-wrapper">${name || "Bạn"}</div>
-                                    <div class="text-wrapper-2">${chosenTag}</div>
-                                    ${toRender[0] ? `<img class="icon" src="${toRender[0]}" alt="Sticker 1" />` : ""}
-                                    ${toRender[1] ? `<img class="img" src="${toRender[1]}" alt="Sticker 2" />` : ""}
-                                    ${toRender[2] ? `<img class="icon-2" src="${toRender[2]}" alt="Sticker 3" />` : ""}
-                                </div>
-                            </div>
-                            <p class="phi-n-b-n-n-y-qu-b-n">Phiên bản này quá đã<br/>Bạn đã đập hộp chưa?</p>
-                            <div class="group-wrapper">
-                                <div class="x-c-nh-n-wrapper" role="button" tabindex="0" onclick="window.location.href='/'" onkeydown="if(event.key==='Enter'||event.key===' '){window.location.href='/' }">
-                                    <div class="x-c-nh-n">ĐẬP HỘP NGAY</div>
-                                </div>
-                            </div>
-                        </div>
+                ${pageBody}
+                <div style="display:flex;justify-content:center;margin-top:16px;">
+                    <div class="x-c-nh-n-wrapper" role="button" tabindex="0" onclick="window.location.href='/'" onkeydown="if(event.key==='Enter'||event.key===' '){window.location.href='/' }">
+                        <div class="x-c-nh-n">ĐẬP HỘP NGAY</div>
                     </div>
-                </section>
+                </div>
             </body>
-        </html>
-    `;
+        </html>`;
 
     res.setHeader("Content-Type", "text/html");
     res.status(200).send(ogHtml);
