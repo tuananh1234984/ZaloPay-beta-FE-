@@ -1,4 +1,39 @@
 const sections = document.querySelectorAll('section');
+// --- Tagline randomization (with optional override via ?tag= or ?phrase=) ---
+const TAGLINES = [
+    "ngoan xinh iu",
+    "cháy năng lượng",
+    "lấp lánh tự tin",
+    "tinh tế chuẩn gu",
+    "ấm áp đáng yêu",
+    "ngầu nhẹ nhàng",
+    "bứt phá dữ dội",
+    "đa nhiệm đỉnh cao",
+    "bình tĩnh điềm nhiên",
+    "rực rỡ bản lĩnh",
+];
+function getQueryParam(name) {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(name);
+}
+const overrideTag = (getQueryParam('tag') || getQueryParam('phrase') || '').trim();
+window.chosenTagline = overrideTag || TAGLINES[Math.floor(Math.random() * TAGLINES.length)];
+
+function applyTaglineToContainers(tagline) {
+    const containers = [
+        document.querySelector('.kt-qu-phin-bn-mi'),
+        document.querySelector('.size'),
+        document.querySelector('.size-9-16'),
+        document.querySelector('.mn-hinh-hin-ra-chia-se'),
+        document.querySelector('.mn-hinh-hin-ra-chia-se-9-16'),
+        document.querySelector('.giao-din-kt-qu-hin'),
+    ];
+    containers.forEach(container => {
+        if (!container) return;
+        const tagDiv = container.querySelector('.group .text-wrapper-2');
+        if (tagDiv) tagDiv.innerText = tagline;
+    });
+}
 const btnPlay = sections[0].querySelector('.x-c-nh-n-wrapper');
 const btnNext = sections[1].querySelector('.x-c-nh-n-wrapper');
 const btnLimit = sections[2].querySelector('.x-c-nh-n-wrapper-1');
@@ -208,6 +243,9 @@ function renderResult(name, stickers) {
         if (!container) return;
         const nameDiv = container.querySelector('.name-label');
         if (nameDiv) nameDiv.innerText = name;
+    // update tagline
+    const tagDiv = container.querySelector('.group .text-wrapper-2');
+    if (tagDiv && window.chosenTagline) tagDiv.innerText = window.chosenTagline;
 
 
         const group = container.querySelector('.group');

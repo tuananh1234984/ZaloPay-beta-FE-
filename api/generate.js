@@ -1,5 +1,5 @@
 module.exports = function handler(req, res) {
-    // Accept params from query string
+    // Accept params from query string (no external override for tagline)
     const { name = "", size = "1-1", image, img, stickers = "" } = req.query;
 
     // Ảnh mặc định để hiển thị trên thẻ OG (không hiển thị trong body)
@@ -21,6 +21,21 @@ module.exports = function handler(req, res) {
         "/assets/icons/icon-3-3.png",
     ];
     const toRender = stickerList.length ? stickerList.slice(0, 3) : fallbackStickers;
+
+    // Random tagline (no override; must come from allowed result phrases)
+    const TAGLINES = [
+        "ngoan xinh iu",
+        "cháy năng lượng",
+        "lấp lánh tự tin",
+        "tinh tế chuẩn gu",
+        "ấm áp đáng yêu",
+        "ngầu nhẹ nhàng",
+        "bứt phá dữ dội",
+        "đa nhiệm đỉnh cao",
+        "bình tĩnh điềm nhiên",
+        "rực rỡ bản lĩnh",
+    ];
+    const chosenTag = TAGLINES[Math.floor(Math.random() * TAGLINES.length)];
 
     // HTML: chỉ render UI giống mock, KHÔNG hiển thị ảnh đã upload trong body
     const ogHtml = `
@@ -50,12 +65,17 @@ module.exports = function handler(req, res) {
                                 <img class="vector" src="/assets/img/Vector-2.png" />
                                 <div class="group">
                                     <div class="name-label text-wrapper">${name || "Bạn"}</div>
-                                    <div class="text-wrapper-2">ngoan xinh iu</div>
+                                    <div class="text-wrapper-2">${chosenTag}</div>
+                                    ${toRender[0] ? `<img class="icon" src="${toRender[0]}" alt="Sticker 1" />` : ""}
+                                    ${toRender[1] ? `<img class="img" src="${toRender[1]}" alt="Sticker 2" />` : ""}
+                                    ${toRender[2] ? `<img class="icon-2" src="${toRender[2]}" alt="Sticker 3" />` : ""}
                                 </div>
                             </div>
                             <p class="phi-n-b-n-n-y-qu-b-n">Phiên bản này quá đã<br/>Bạn đã đập hộp chưa?</p>
                             <div class="group-wrapper">
-                                <div class="x-c-nh-n-wrapper"><div class="x-c-nh-n">ĐẬP HỘP NGAY</div></div>
+                                <div class="x-c-nh-n-wrapper" role="button" tabindex="0" onclick="window.location.href='/'" onkeydown="if(event.key==='Enter'||event.key===' '){window.location.href='/' }">
+                                    <div class="x-c-nh-n">ĐẬP HỘP NGAY</div>
+                                </div>
                             </div>
                         </div>
                     </div>
