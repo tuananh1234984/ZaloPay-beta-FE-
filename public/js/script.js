@@ -467,8 +467,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
 
                 const dataURL = canvas.toDataURL("image/png");
-                const imgW = canvas.width;
-                const imgH = canvas.height;
                 if (dataURL === "data:,") throw new Error("canvas trống!");
 
                 const blob = await (await fetch(dataURL)).blob();
@@ -501,7 +499,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
 
                     const tagParam = (window.chosenTagline || '').toString();
-                    const linkWithQuery = `${base}/api/generate?name=${encodeURIComponent(name)}&size=${encodeURIComponent(currentSize)}&stickers=${encodeURIComponent(stickersParam)}&img=${encodeURIComponent(data.secure_url)}&tagline=${encodeURIComponent(tagParam)}&iw=${encodeURIComponent(imgW)}&ih=${encodeURIComponent(imgH)}`;
+                    const linkWithQuery = `${base}/api/generate?name=${encodeURIComponent(name)}&size=${encodeURIComponent(currentSize)}&stickers=${encodeURIComponent(stickersParam)}&img=${encodeURIComponent(data.secure_url)}&tagline=${encodeURIComponent(tagParam)}`;
 
                     const shareUrl = encodeURIComponent(linkWithQuery);
                     window.open(
