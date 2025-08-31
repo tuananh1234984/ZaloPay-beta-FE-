@@ -499,7 +499,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         currentSize = "9-16";
                     }
 
-                    const linkWithQuery = `${base}/api/generate?name=${encodeURIComponent(name)}&size=${encodeURIComponent(currentSize)}&stickers=${encodeURIComponent(stickersParam)}&img=${encodeURIComponent(data.secure_url)}`;
+                    const tagParam = (window.chosenTagline || '').toString();
+                    const linkWithQuery = `${base}/api/generate?name=${encodeURIComponent(name)}&size=${encodeURIComponent(currentSize)}&stickers=${encodeURIComponent(stickersParam)}&img=${encodeURIComponent(data.secure_url)}&tagline=${encodeURIComponent(tagParam)}`;
 
                     const shareUrl = encodeURIComponent(linkWithQuery);
                     window.open(
