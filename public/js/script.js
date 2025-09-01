@@ -19,6 +19,73 @@ function getQueryParam(name) {
 const overrideTag = (getQueryParam('tag') || getQueryParam('phrase') || '').trim();
 window.chosenTagline = overrideTag || TAGLINES[Math.floor(Math.random() * TAGLINES.length)];
 
+// ===== Share helpers (ensure Facebook always sees a public OG page) =====
+const PROD_BASE = 'https://zalo-pay-beta.vercel.app';
+
+// Force dùng domain production để Facebook không gặp preview/private
+function getShareBase() {
+  return PROD_BASE;
+}
+
+// Dựng URL /api/generate với đủ tham số để backend render OG đúng
+function buildGenerateLink({ name, size, stickers, img, tagline, iw, ih }) {
+  const base = getShareBase();
+  const stickersParam = Array.isArray(stickers) ? stickers.join(',') : (stickers || '');
+  const params = new URLSearchParams({
+    name: name || '',
+    size: size || '1-1',
+    stickers: stickersParam,
+    img: img || '',
+    tagline: tagline || '',
+    iw: String(iw || ''),
+    ih: String(ih || '')
+  });
+  return `${base}/api/generate?${params.toString()}`;
+}
+
+// Mở Facebook sharer với URL đã dựng
+function openFacebookSharer(url) {
+  const sharer = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+  window.open(sharer, '_blank', 'noopener,noreferrer,width=720,height=640');
+}
+
+// Hàm tiện ích bạn gọi sau khi đã có URL ảnh Cloudinary (secure_url)
+window.createAndOpenShareLink = function ({ canvas, cloudinaryUrl, name, size, selectedStickers }) {
+  try {
+    const iw = canvas?.width || 1200;
+    const ih = canvas?.height || (size === '9-16' ? 1920 : 1200);
+    const link = buildGenerateLink({
+      name,
+      size,
+      stickers: selectedStickers || [],
+      img: cloudinaryUrl,
+      tagline: window.chosenTagline || '',
+      iw, ih
+    });
+    openFacebookSharer(link);
+    return link;
+  } catch (e) {
+    console.error('Create share link failed:', e);
+  }
+};
+
+// (Tuỳ chọn) tự gắn sự kiện cho các nút có data-share="facebook"
+document.querySelectorAll('[data-share="facebook"], #shareFacebook, .share-facebook').forEach(btn => {
+  btn.addEventListener('click', (ev) => {
+    // Bạn cần truyền đúng các giá trị thực tế từ app của bạn:
+    // window.lastCanvas, window.lastUploadedUrl, window.currentName, window.currentSize, window.selectedStickers
+    if (!window.lastUploadedUrl) return;
+    window.createAndOpenShareLink({
+      canvas: window.lastCanvas,
+      cloudinaryUrl: window.lastUploadedUrl,
+      name: window.currentName || '',
+      size: window.currentSize || '1-1',
+      selectedStickers: window.selectedStickers || []
+    });
+    ev.preventDefault();
+  });
+});
+
 function applyTaglineToContainers(tagline) {
     const containers = [
         document.querySelector('.kt-qu-phin-bn-mi'),
