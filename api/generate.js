@@ -1,6 +1,6 @@
 module.exports = function handler(req, res) {
     // Accept params from query string; prefer tagline from client to keep consistency
-    const { name = "", size = "1-1", image, img, stickers = "", tagline = "", tag = "" } = req.query;
+    const { name = "", size = "1-1", image, img, stickers = "", tagline = "", tag = "", iw, ih } = req.query;
 
     // Basic HTML escape to avoid injection in server-rendered page
     const escapeHtml = (v) => String(v)
@@ -20,7 +20,7 @@ module.exports = function handler(req, res) {
     const imageUrl = image || img || defaultImage;
 
     // Danh sách sticker: nếu không có thì dùng sticker mặc định trong public/assets/icons
-    const stickerList = String(stickers)
+    const stickerList = String(stickers || "")
         .split(",")
         .filter(Boolean);
     const fallbackStickers = [
@@ -107,6 +107,9 @@ module.exports = function handler(req, res) {
         }
     })();
 
+    const ogWidth = Number(iw) || (size === '9-16' ? 1080 : 1200);
+    const ogHeight = Number(ih) || (size === '9-16' ? 1920 : 1200);
+
     const ogHtml = `
         <!DOCTYPE html>
         <html lang="vi">
@@ -119,8 +122,9 @@ module.exports = function handler(req, res) {
                 <meta property="og:description" content="Phiên bản này quá đã. Bạn đã đập hộp chưa?" />
                 <meta property="og:image" content="${imageUrl}" />
                 <meta property="og:image:secure_url" content="${imageUrl}" />
-                <meta property="og:image:width" content="1200" />
-                <meta property="og:image:height" content="630" />
+                <meta property="og:image:type" content="image/png" />
+                <meta property="og:image:width" content="${ogWidth}" />
+                <meta property="og:image:height" content="${ogHeight}" />
                 <meta property="og:url" content="${canonicalUrl}" />
                 <meta property="twitter:card" content="summary_large_image" />
                 <meta property="twitter:image" content="${imageUrl}" />
