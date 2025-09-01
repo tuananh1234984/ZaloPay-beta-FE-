@@ -27,18 +27,14 @@ function getShareBase() {
   return PROD_BASE;
 }
 
-// Dựng URL /api/generate với đủ tham số để backend render OG đúng
-function buildGenerateLink({ name, size, img, tagline, iw, ih }) {
-  const base = getShareBase();
-  const params = new URLSearchParams({
-    name: name || '',
-    size: size || '1-1',
-    img: img || '',
-    tagline: tagline || '',
-    iw: String(iw || ''),
-    ih: String(ih || '')
-  });
-  return `${base}/api/generate?${params.toString()}`;
+// Dựng URL /api/generate giống nhánh final-web-1 (chỉ cần name, stickers, img)
+function buildGenerateLink({ name, stickers, img }) {
+    const prodBase = 'https://zalo-pay-beta.vercel.app';
+    const base = /localhost|127\.|0\.0\.0\.0/.test(window.location.origin)
+        ? prodBase
+        : window.location.origin;
+    const stickersParam = Array.isArray(stickers) ? stickers.join(',') : (stickers || '');
+    return `${base}/api/generate?name=${encodeURIComponent(name || '')}&stickers=${encodeURIComponent(stickersParam)}&img=${encodeURIComponent(img || '')}`;
 }
 
 // Helpers to optionally use Facebook Share Dialog (adds quote/hashtag) or fallback to sharer
@@ -67,18 +63,14 @@ function openFacebookShare(url, opts = {}) {
 }
 
 // Hàm tiện ích bạn gọi sau khi đã có URL ảnh Cloudinary (secure_url)
-window.createAndOpenShareLink = function ({ canvas, cloudinaryUrl, name, size }) {
+window.createAndOpenShareLink = function ({ canvas, cloudinaryUrl, name, size, selectedStickers }) {
   try {
-    const iw = canvas?.width || 1200;
-    const ih = canvas?.height || (size === '9-16' ? 1920 : 1200);
-    const link = buildGenerateLink({
-      name,
-      size,
-      img: cloudinaryUrl,
-      tagline: window.chosenTagline || '',
-      iw, ih
-    });
-        openFacebookShare(link, { quote: `${name || 'Bạn'} • ${window.chosenTagline || ''}`, hashtag: 'ZaloPay' });
+        const link = buildGenerateLink({
+            name,
+            stickers: selectedStickers || window.selectedStickers || [],
+            img: cloudinaryUrl
+        });
+                openFacebookShare(link, { quote: `${name || 'Bạn'}`, hashtag: 'ZaloPay' });
         if (navigator.clipboard?.writeText) {
             navigator.clipboard.writeText(link).catch(()=>{});
         }
@@ -98,7 +90,8 @@ document.querySelectorAll('[data-share="facebook"], #shareFacebook, .share-faceb
       canvas: window.lastCanvas,
       cloudinaryUrl: window.lastUploadedUrl,
       name: window.currentName || '',
-            size: window.currentSize || '1-1'
+            size: window.currentSize || '1-1',
+            selectedStickers: window.selectedStickers || []
     });
     ev.preventDefault();
   });
