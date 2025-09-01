@@ -96,6 +96,17 @@ module.exports = function handler(req, res) {
 
     const shareBody = size === "9-16" ? shareNineSixteen : shareOneOne;
 
+    // Build a canonical URL for og:url (helps Facebook cache/refresh correctly)
+    const canonicalUrl = (() => {
+        try {
+            const proto = req.headers['x-forwarded-proto'] || 'https';
+            const host = req.headers['x-forwarded-host'] || req.headers.host || 'zalo-pay-beta.vercel.app';
+            return `${proto}://${host}${req.url}`;
+        } catch {
+            return 'https://zalo-pay-beta.vercel.app/api/generate';
+        }
+    })();
+
     const ogHtml = `
         <!DOCTYPE html>
         <html lang="vi">
@@ -107,6 +118,10 @@ module.exports = function handler(req, res) {
                 <meta property="og:title" content="${safeName} - Phiên bản mới ZaloPay" />
                 <meta property="og:description" content="Phiên bản này quá đã. Bạn đã đập hộp chưa?" />
                 <meta property="og:image" content="${imageUrl}" />
+                <meta property="og:image:secure_url" content="${imageUrl}" />
+                <meta property="og:image:width" content="1200" />
+                <meta property="og:image:height" content="630" />
+                <meta property="og:url" content="${canonicalUrl}" />
                 <meta property="twitter:card" content="summary_large_image" />
                 <meta property="twitter:image" content="${imageUrl}" />
                 <link rel="preload" as="image" href="/assets/img/Vector-2.png" />
@@ -114,6 +129,9 @@ module.exports = function handler(req, res) {
                 <link rel="stylesheet" href="/css/styleguile.css" />
                 <link rel="stylesheet" href="/css/style.css" />
                 <link rel="stylesheet" href="/css/global.css" />
+                <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+                <meta http-equiv="Pragma" content="no-cache" />
+                <meta http-equiv="Expires" content="0" />
             </head>
             <body>
                 <section>
@@ -123,5 +141,7 @@ module.exports = function handler(req, res) {
         </html>`;
 
     res.setHeader("Content-Type", "text/html");
+    // Prevent intermediate caches from serving stale OG content when sharing variations
+    res.setHeader("Cache-Control", "no-store, max-age=0");
     res.status(200).send(ogHtml);
 }
