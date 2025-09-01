@@ -41,10 +41,29 @@ function buildGenerateLink({ name, size, img, tagline, iw, ih }) {
   return `${base}/api/generate?${params.toString()}`;
 }
 
-// Mở Facebook sharer với URL đã dựng
-function openFacebookSharer(url) {
-  const sharer = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-  window.open(sharer, '_blank', 'noopener,noreferrer,width=720,height=640');
+// Helpers to optionally use Facebook Share Dialog (adds quote/hashtag) or fallback to sharer
+function getMeta(name) {
+    const el = document.querySelector(`meta[name="${name}"]`);
+    return el?.content || '';
+}
+const FB_APP_ID = (window.APP_CONFIG?.FB_APP_ID) || getMeta('fb:app_id') || '';
+
+function openFacebookShare(url, opts = {}) {
+    const { quote = '', hashtag = '' } = opts;
+    if (FB_APP_ID) {
+        const redirect = `${getShareBase()}`;
+        const dialog = new URL('https://www.facebook.com/dialog/share');
+        dialog.searchParams.set('app_id', FB_APP_ID);
+        dialog.searchParams.set('display', 'popup');
+        dialog.searchParams.set('href', url);
+        dialog.searchParams.set('redirect_uri', redirect);
+        if (quote) dialog.searchParams.set('quote', quote);
+        if (hashtag) dialog.searchParams.set('hashtag', hashtag.startsWith('#') ? hashtag : `#${hashtag}`);
+        window.open(dialog.toString(), '_blank', 'noopener,noreferrer,width=720,height=640');
+    } else {
+        const sharer = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+        window.open(sharer, '_blank', 'noopener,noreferrer,width=720,height=640');
+    }
 }
 
 // Hàm tiện ích bạn gọi sau khi đã có URL ảnh Cloudinary (secure_url)
@@ -59,7 +78,10 @@ window.createAndOpenShareLink = function ({ canvas, cloudinaryUrl, name, size })
       tagline: window.chosenTagline || '',
       iw, ih
     });
-    openFacebookSharer(link);
+        openFacebookShare(link, { quote: `${name || 'Bạn'} • ${window.chosenTagline || ''}`, hashtag: 'ZaloPay' });
+        if (navigator.clipboard?.writeText) {
+            navigator.clipboard.writeText(link).catch(()=>{});
+        }
     return link;
   } catch (e) {
     console.error('Create share link failed:', e);
