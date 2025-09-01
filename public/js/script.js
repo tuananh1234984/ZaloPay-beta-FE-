@@ -29,10 +29,8 @@ function getShareBase() {
 
 // Dựng URL /api/generate giống nhánh final-web-1 (chỉ cần name, stickers, img)
 function buildGenerateLink({ name, stickers, img }) {
-    const prodBase = 'https://zalo-pay-beta.vercel.app';
-    const base = /localhost|127\.|0\.0\.0\.0/.test(window.location.origin)
-        ? prodBase
-        : window.location.origin;
+    // Always use public production host so Facebook scraper can access
+    const base = getShareBase();
     const stickersParam = Array.isArray(stickers) ? stickers.join(',') : (stickers || '');
         const v = Date.now().toString(36);
         return `${base}/api/generate?name=${encodeURIComponent(name || '')}&stickers=${encodeURIComponent(stickersParam)}&img=${encodeURIComponent(img || '')}&v=${v}`;
