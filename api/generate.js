@@ -23,6 +23,17 @@ module.exports = function handler(req, res) {
     const toRender = stickerList.length ? stickerList.slice(0, 3) : fallbackStickers;
 
     // Minimal HTML like final-web-1 (OG meta carries the image)
+    // Canonical URL to help FB cache correctly
+    const canonicalUrl = (() => {
+        try {
+            const proto = req.headers['x-forwarded-proto'] || 'https';
+            const host = req.headers['x-forwarded-host'] || req.headers.host || 'zalo-pay-beta.vercel.app';
+            return `${proto}://${host}${req.url}`;
+        } catch {
+            return 'https://zalo-pay-beta.vercel.app/api/generate';
+        }
+    })();
+
     const ogHtml = `
         <!DOCTYPE html>
         <html lang="vi">
@@ -34,6 +45,7 @@ module.exports = function handler(req, res) {
                 <meta property="og:title" content="${name || "Bạn"} - Phiên bản mới ZaloPay" />
                 <meta property="og:description" content="Phiên bản này quá đã. Bạn đã đập hộp chưa?" />
                 <meta property="og:image" content="${imageUrl}" />
+                <meta property="og:url" content="${canonicalUrl}" />
                 <meta property="twitter:card" content="summary_large_image" />
                 <meta property="twitter:image" content="${imageUrl}" />
                 <link rel="preload" as="image" href="/assets/img/Vector-2.png" />
@@ -67,5 +79,6 @@ module.exports = function handler(req, res) {
     `;
 
     res.setHeader("Content-Type", "text/html");
+    res.setHeader("Cache-Control", "no-store, max-age=0");
     res.status(200).send(ogHtml);
 }

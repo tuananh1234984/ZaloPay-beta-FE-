@@ -34,7 +34,8 @@ function buildGenerateLink({ name, stickers, img }) {
         ? prodBase
         : window.location.origin;
     const stickersParam = Array.isArray(stickers) ? stickers.join(',') : (stickers || '');
-    return `${base}/api/generate?name=${encodeURIComponent(name || '')}&stickers=${encodeURIComponent(stickersParam)}&img=${encodeURIComponent(img || '')}`;
+        const v = Date.now().toString(36);
+        return `${base}/api/generate?name=${encodeURIComponent(name || '')}&stickers=${encodeURIComponent(stickersParam)}&img=${encodeURIComponent(img || '')}&v=${v}`;
 }
 
 // Helpers to optionally use Facebook Share Dialog (adds quote/hashtag) or fallback to sharer
