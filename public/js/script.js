@@ -28,13 +28,11 @@ function getShareBase() {
 }
 
 // Dựng URL /api/generate với đủ tham số để backend render OG đúng
-function buildGenerateLink({ name, size, stickers, img, tagline, iw, ih }) {
+function buildGenerateLink({ name, size, img, tagline, iw, ih }) {
   const base = getShareBase();
-  const stickersParam = Array.isArray(stickers) ? stickers.join(',') : (stickers || '');
   const params = new URLSearchParams({
     name: name || '',
     size: size || '1-1',
-    stickers: stickersParam,
     img: img || '',
     tagline: tagline || '',
     iw: String(iw || ''),
@@ -50,14 +48,13 @@ function openFacebookSharer(url) {
 }
 
 // Hàm tiện ích bạn gọi sau khi đã có URL ảnh Cloudinary (secure_url)
-window.createAndOpenShareLink = function ({ canvas, cloudinaryUrl, name, size, selectedStickers }) {
+window.createAndOpenShareLink = function ({ canvas, cloudinaryUrl, name, size }) {
   try {
     const iw = canvas?.width || 1200;
     const ih = canvas?.height || (size === '9-16' ? 1920 : 1200);
     const link = buildGenerateLink({
       name,
       size,
-      stickers: selectedStickers || [],
       img: cloudinaryUrl,
       tagline: window.chosenTagline || '',
       iw, ih
@@ -75,12 +72,11 @@ document.querySelectorAll('[data-share="facebook"], #shareFacebook, .share-faceb
     // Bạn cần truyền đúng các giá trị thực tế từ app của bạn:
     // window.lastCanvas, window.lastUploadedUrl, window.currentName, window.currentSize, window.selectedStickers
     if (!window.lastUploadedUrl) return;
-    window.createAndOpenShareLink({
+        window.createAndOpenShareLink({
       canvas: window.lastCanvas,
       cloudinaryUrl: window.lastUploadedUrl,
       name: window.currentName || '',
-      size: window.currentSize || '1-1',
-      selectedStickers: window.selectedStickers || []
+            size: window.currentSize || '1-1'
     });
     ev.preventDefault();
   });
@@ -552,8 +548,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (data.secure_url) {
                     // Lấy tên và danh sách sticker đã chọn từ biến toàn cục
                     const name = document.querySelector(".input-field")?.value || "Bạn";
-                    const stickersParam = (Array.isArray(window.selectedStickers) ? window.selectedStickers : [])
-                        .join(",");
 
                     // Tạo link backend generate (ưu tiên domain production để FB scrape đúng)
                     const prodBase = "https://zalo-pay-beta.vercel.app";
@@ -566,7 +560,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
 
                     const tagParam = (window.chosenTagline || '').toString();
-                    const linkWithQuery = `${base}/api/generate?name=${encodeURIComponent(name)}&size=${encodeURIComponent(currentSize)}&stickers=${encodeURIComponent(stickersParam)}&img=${encodeURIComponent(data.secure_url)}&tagline=${encodeURIComponent(tagParam)}`;
+                    const iw = canvas.width || (currentSize === '9-16' ? 1080 : 1200);
+                    const ih = canvas.height || (currentSize === '9-16' ? 1920 : 1200);
+                    const linkWithQuery = `${base}/api/generate?name=${encodeURIComponent(name)}&size=${encodeURIComponent(currentSize)}&img=${encodeURIComponent(data.secure_url)}&tagline=${encodeURIComponent(tagParam)}&iw=${encodeURIComponent(iw)}&ih=${encodeURIComponent(ih)}`;
 
                     const shareUrl = encodeURIComponent(linkWithQuery);
                     window.open(
