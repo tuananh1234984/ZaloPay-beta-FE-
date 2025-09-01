@@ -562,30 +562,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 const data = await res.json();
 
                 if (data.secure_url) {
-                    // Lấy tên và danh sách sticker đã chọn từ biến toàn cục
-                    const name = document.querySelector(".input-field")?.value || "Bạn";
-
-                    // Tạo link backend generate (ưu tiên domain production để FB scrape đúng)
-                    const prodBase = "https://zalo-pay-beta.vercel.app";
-                    // Luôn dùng domain production khi chia sẻ để FB có thể truy cập (tránh các preview/private URL)
-                    const base = prodBase;
-                    // Determine current size (1-1 or 9-16) from the section context
-                    let currentSize = "1-1";
-                    if (currentSection?.classList.contains("size-9-16") || currentSection?.classList.contains("mn-hinh-hin-ra-chia-se-9-16")) {
-                        currentSize = "9-16";
-                    }
-
-                    const tagParam = (window.chosenTagline || '').toString();
-                    const iw = canvas.width || (currentSize === '9-16' ? 1080 : 1200);
-                    const ih = canvas.height || (currentSize === '9-16' ? 1920 : 1200);
-                    const linkWithQuery = `${base}/api/generate?name=${encodeURIComponent(name)}&size=${encodeURIComponent(currentSize)}&img=${encodeURIComponent(data.secure_url)}&tagline=${encodeURIComponent(tagParam)}&iw=${encodeURIComponent(iw)}&ih=${encodeURIComponent(ih)}`;
-
-                    const shareUrl = encodeURIComponent(linkWithQuery);
-                    window.open(
-                        `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`,
-                        "_blank",
-                        "width=600, height=400"
-                    );
+                    const name = document.querySelector('.input-field')?.value || 'Bạn';
+                    window.createAndOpenShareLink({
+                        canvas,
+                        cloudinaryUrl: data.secure_url,
+                        name,
+                        size: currentSection?.classList.contains('size-9-16') || currentSection?.classList.contains('mn-hinh-hin-ra-chia-se-9-16') ? '9-16' : '1-1',
+                        selectedStickers: window.selectedStickers || []
+                    });
                 } else {
                     console.error("Upload fail: ", data);
                     showErrorSlide();
