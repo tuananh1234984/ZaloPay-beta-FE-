@@ -98,7 +98,9 @@ module.exports = function handler(req, res) {
                             }
                             <p class="phi-n-b-n-n-y-qu-b-n">Phiên bản này quá đã<br/>Bạn đã đập hộp chưa?</p>
                             <div class="group-wrapper">
-                                <div class="x-c-nh-n-wrapper"><div class="x-c-nh-n">ĐẬP HỘP NGAY</div></div>
+                                <a href="/" class="x-c-nh-n-wrapper" style="text-decoration: none;">
+                                    <div class="x-c-nh-n">ĐẬP HỘP NGAY</div>
+                                </a>
                             </div>
                         </div>
                     </div>
