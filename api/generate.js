@@ -34,6 +34,12 @@ module.exports = function handler(req, res) {
         }
     })();
 
+    const isNineSixteen = String(size) === '9-16';
+    const sizeClass = isNineSixteen ? 'size-9-16' : 'size';
+    const sizeStyle = isNineSixteen
+        ? '<link rel="stylesheet" href="/css/style.css" />'
+        : '<link rel="stylesheet" href="/css/style.css" />';
+
     const ogHtml = `
         <!DOCTYPE html>
         <html lang="vi">
@@ -50,23 +56,41 @@ module.exports = function handler(req, res) {
                 <meta property="twitter:image" content="${imageUrl}" />
                 <link rel="preload" as="image" href="/assets/img/Vector-2.png" />
                 <link rel="stylesheet" href="/css/styleguile.css" />
-                <link rel="stylesheet" href="/css/style.css" />
+                ${sizeStyle}
                 <link rel="stylesheet" href="/css/global.css" />
             </head>
             <body>
                 <section>
-                    <div class="giao-din-kt-qu-hin">
+                    <div class="giao-din-kt-qu-hin ${sizeClass}">
                         <div class="div">
-                            <div class="overlap">
-                                <img class="vector" src="/assets/img/Vector-2.png" />
-                                <div class="group">
-                                    <div class="name-label text-wrapper">${name || "Bạn"}</div>
-                                    <div class="text-wrapper-2">ngoan xinh iu</div>
-                                    ${toRender[0] ? `<img class="icon" src="${toRender[0]}" alt="Sticker 1" />` : ""}
-                                    ${toRender[1] ? `<img class="img" src="${toRender[1]}" alt="Sticker 2" />` : ""}
-                                    ${toRender[2] ? `<img class=\"icon-2\" src=\"${toRender[2]}\" alt=\"Sticker 3\" />` : ""}
+                            ${isNineSixteen
+                                ? `
+                                <div class="overlap">
+                                    <div class="group-wrapper">
+                                        <img class="vector" src="/assets/img/Vector-2.png" />
+                                        <div class="group">
+                                            <div class="name-label text-wrapper">${name || 'Bạn'}</div>
+                                            <div class="text-wrapper-2">ngoan xinh iu</div>
+                                            ${toRender[0] ? `<img class="icon" src="${toRender[0]}" alt="Sticker 1" />` : ''}
+                                            ${toRender[1] ? `<img class="img" src="${toRender[1]}" alt="Sticker 2" />` : ''}
+                                            ${toRender[2] ? `<img class="icon-2" src="${toRender[2]}" alt="Sticker 3" />` : ''}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                                `
+                                : `
+                                <div class="overlap">
+                                    <img class="vector" src="/assets/img/Vector-2.png" />
+                                    <div class="group">
+                                        <div class="name-label text-wrapper">${name || 'Bạn'}</div>
+                                        <div class="text-wrapper-2">ngoan xinh iu</div>
+                                        ${toRender[0] ? `<img class="icon" src="${toRender[0]}" alt="Sticker 1" />` : ''}
+                                        ${toRender[1] ? `<img class="img" src="${toRender[1]}" alt="Sticker 2" />` : ''}
+                                        ${toRender[2] ? `<img class="icon-2" src="${toRender[2]}" alt="Sticker 3" />` : ''}
+                                    </div>
+                                </div>
+                                `
+                            }
                             <p class="phi-n-b-n-n-y-qu-b-n">Phiên bản này quá đã<br/>Bạn đã đập hộp chưa?</p>
                             <div class="group-wrapper">
                                 <div class="x-c-nh-n-wrapper"><div class="x-c-nh-n">ĐẬP HỘP NGAY</div></div>
