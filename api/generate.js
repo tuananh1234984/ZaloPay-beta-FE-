@@ -1,6 +1,6 @@
 module.exports = function handler(req, res) {
     // Accept params from query string (match final-web-1 behavior)
-    const { name = "", size = "1-1", image, img, stickers = "" } = req.query;
+    const { name = "", size = "1-1", image, img, stickers = "", tag = "", phrase = "" } = req.query;
 
     // Default OG image
     const defaultImage =
@@ -42,6 +42,7 @@ module.exports = function handler(req, res) {
         : '<link rel="stylesheet" href="/css/style.css" />';
 
     const layout = (req.query.layout === 'clean') ? 'layout-clean' : 'layout-card';
+    const tagline = String(tag || phrase || 'ngoan xinh iu');
     const ogHtml = `
         <!DOCTYPE html>
         <html lang="vi">
@@ -75,7 +76,7 @@ module.exports = function handler(req, res) {
                                         <img class="vector" src="/assets/img/Vector-2.png" />
                                         <div class="group">
                                             <div class="name-label text-wrapper">${name || 'Bạn'}</div>
-                                            <div class="text-wrapper-2">ngoan xinh iu</div>
+                                            <div class="text-wrapper-2">${tagline}</div>
                                             ${toRender[0] ? `<img class="icon" src="${toRender[0]}" alt="Sticker 1" />` : ''}
                                             ${toRender[1] ? `<img class="img" src="${toRender[1]}" alt="Sticker 2" />` : ''}
                                             ${toRender[2] ? `<img class="icon-2" src="${toRender[2]}" alt="Sticker 3" />` : ''}
@@ -88,7 +89,7 @@ module.exports = function handler(req, res) {
                                     <img class="vector" src="/assets/img/Vector-2.png" />
                                     <div class="group">
                                         <div class="name-label text-wrapper">${name || 'Bạn'}</div>
-                                        <div class="text-wrapper-2">ngoan xinh iu</div>
+                                        <div class="text-wrapper-2">${tagline}</div>
                                         ${toRender[0] ? `<img class="icon" src="${toRender[0]}" alt="Sticker 1" />` : ''}
                                         ${toRender[1] ? `<img class="img" src="${toRender[1]}" alt="Sticker 2" />` : ''}
                                         ${toRender[2] ? `<img class="icon-2" src="${toRender[2]}" alt="Sticker 3" />` : ''}
