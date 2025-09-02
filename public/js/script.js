@@ -30,13 +30,32 @@ function getShareBase() {
   return PROD_BASE;
 }
 
-// Dựng URL /api/generate giống nhánh final-web-1 (chỉ cần name, stickers, img)
-function buildGenerateLink({ name, stickers, img, size }) {
+// Chuẩn hoá URL sticker về domain production để tránh link preview per-commit bị hỏng
+function normalizeStickerUrl(u) {
+    try {
+        const url = new URL(u, window.location.href);
+        const idx = url.pathname.indexOf('/assets/icons/');
+        if (idx >= 0) {
+            const rest = url.pathname.substring(idx + '/assets/icons/'.length);
+            return `${getShareBase()}/assets/icons/${rest}`;
+        }
+        return u;
+    } catch {
+        // Nếu không parse được thì giữ nguyên
+        return u;
+    }
+}
+
+// Dựng URL /api/generate giống nhánh final-web-1 (thêm truyền tagline)
+function buildGenerateLink({ name, stickers, img, size, tag }) {
     const base = getShareBase(); // Always use public prod domain to avoid preview auth
-    const stickersParam = Array.isArray(stickers) ? stickers.join(',') : (stickers || '');
-        const v = Date.now().toString(36);
+    const list = Array.isArray(stickers) ? stickers : (stickers ? [stickers] : []);
+    const normalized = list.map(normalizeStickerUrl);
+    const stickersParam = normalized.join(',');
+    const v = Date.now().toString(36);
     const sizeParam = size ? `&size=${encodeURIComponent(size)}` : '';
-    return `${base}/api/generate?name=${encodeURIComponent(name || '')}&stickers=${encodeURIComponent(stickersParam)}&img=${encodeURIComponent(img || '')}${sizeParam}&v=${v}`;
+    const tagParam = tag ? `&tag=${encodeURIComponent(tag)}` : '';
+    return `${base}/api/generate?name=${encodeURIComponent(name || '')}&stickers=${encodeURIComponent(stickersParam)}&img=${encodeURIComponent(img || '')}${sizeParam}${tagParam}&v=${v}`;
 }
 
 // Helpers to optionally use Facebook Share Dialog (adds quote/hashtag) or fallback to sharer
@@ -71,7 +90,8 @@ window.createAndOpenShareLink = function ({ canvas, cloudinaryUrl, name, size, s
             name,
             stickers: selectedStickers || window.selectedStickers || [],
             img: cloudinaryUrl,
-            size
+            size,
+            tag: window.chosenTagline || ''
         });
                 openFacebookShare(link, { quote: `${name || 'Bạn'}`, hashtag: 'ZaloPay' });
         if (navigator.clipboard?.writeText) {
