@@ -2803,6 +2803,27 @@ button .x-c-nh-n {
     top: -50px;
     left: 10px;
     transform: rotate(10.96deg);
+
+/* ===== Generate page final overrides (ensure consistent card size) ===== */
+.page-generate.layout-card .giao-din-kt-qu-hin.size .overlap {
+    position: absolute !important;
+    width: 354px !important;
+    height: 354px !important;
+    top: 245px !important;
+    left: 18px !important;
+    background: #ffffff !important;
+    box-shadow: 0px 0px 3px #00000040 !important;
+}
+
+.page-generate.layout-card .giao-din-kt-qu-hin.size-9-16 .overlap {
+    position: absolute !important;
+    width: 282px !important;
+    height: 500px !important;
+    top: 170px !important;
+    left: 50px !important;
+    background: #ffffff !important;
+    box-shadow: 0px 0px 3px #00000040 !important;
+}
     object-fit: cover;
 }
 
