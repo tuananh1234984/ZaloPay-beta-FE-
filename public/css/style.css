@@ -220,6 +220,32 @@ html, body {
     }
 }
 
+/* Hiệu ứng bổ sung theo style sự kiện */
+.sticker-pop { animation: stickerPop 420ms cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes stickerPop {
+    0% { opacity: 0; transform: scale(.6) rotate(-8deg); }
+    60% { opacity: 1; transform: scale(1.08) rotate(3deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+.cta-pulse { animation: ctaPulse 1.4s ease-in-out infinite; }
+@keyframes ctaPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 rgba(0, 210, 106, 0); }
+    50% { transform: scale(1.03); box-shadow: 0 8px 20px rgba(0, 210, 106, .25); }
+}
+
+.shake-hammer { animation: shakeHammer 600ms ease-in-out 1; transform-origin: 20% 0; }
+@keyframes shakeHammer {
+    0% { transform: rotate(0deg); }
+    30% { transform: rotate(-14deg) translateY(-4px); }
+    60% { transform: rotate(8deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
 /* section slide 2 */
 .bc-nhp-tn{
     background-color: #ffffff;
@@ -1066,6 +1092,7 @@ button .x-c-nh-n {
     border-radius: 15px;
     transition: transform 0.3s ease;
 }
+.hiu-ng-p-hp .rectangle-2.opened { transform: scale(1.08); box-shadow: 0 10px 24px rgba(0,0,0,.12); }
 
 .hiu-ng-p-hp .text-wrapper-3 {
     position: absolute;
@@ -1336,6 +1363,9 @@ button .x-c-nh-n {
     color: #0066ff;
 }
 
+/* Nút ĐẬP HỘP ở màn kết quả */
+/* (Removed) reopen-box-btn styles; button now only exists in generate.js page */
+
 .kt-qu-phin-bn-mi .popup-box {
     background: #fff;
     border-radius: 12px;
@@ -1432,7 +1462,7 @@ button .x-c-nh-n {
 .size-btn[data-size="1-1"] .rectang-1-1 {
     width: 20px;
     height: 20px;
-    border: 3px solid #0033c9;
+    border: 1px solid #0033c9;
     border-radius: 4px;
     margin-bottom: 8px;
     background: #fff;

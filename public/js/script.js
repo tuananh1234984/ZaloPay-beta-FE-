@@ -17,7 +17,9 @@ function getQueryParam(name) {
     return params.get(name);
 }
 const overrideTag = (getQueryParam('tag') || getQueryParam('phrase') || '').trim();
-window.chosenTagline = overrideTag || TAGLINES[Math.floor(Math.random() * TAGLINES.length)];
+// Freeze-able tagline: allow override via query, else pick once and freeze after step 2
+window._taglineInitial = overrideTag || TAGLINES[Math.floor(Math.random() * TAGLINES.length)];
+window.chosenTagline = window._taglineInitial;
 
 // ===== Share helpers (ensure Facebook always sees a public OG page) =====
 const PROD_BASE = 'https://zalo-pay-beta.vercel.app';
@@ -28,14 +30,15 @@ function getShareBase() {
 }
 
 // Dựng URL /api/generate giống nhánh final-web-1 (chỉ cần name, stickers, img)
-function buildGenerateLink({ name, stickers, img }) {
+function buildGenerateLink({ name, stickers, img, size }) {
     const prodBase = 'https://zalo-pay-beta.vercel.app';
     const base = /localhost|127\.|0\.0\.0\.0/.test(window.location.origin)
         ? prodBase
         : window.location.origin;
     const stickersParam = Array.isArray(stickers) ? stickers.join(',') : (stickers || '');
         const v = Date.now().toString(36);
-        return `${base}/api/generate?name=${encodeURIComponent(name || '')}&stickers=${encodeURIComponent(stickersParam)}&img=${encodeURIComponent(img || '')}&v=${v}`;
+    const sizeParam = size ? `&size=${encodeURIComponent(size)}` : '';
+    return `${base}/api/generate?name=${encodeURIComponent(name || '')}&stickers=${encodeURIComponent(stickersParam)}&img=${encodeURIComponent(img || '')}${sizeParam}&v=${v}`;
 }
 
 // Helpers to optionally use Facebook Share Dialog (adds quote/hashtag) or fallback to sharer
@@ -69,7 +72,8 @@ window.createAndOpenShareLink = function ({ canvas, cloudinaryUrl, name, size, s
         const link = buildGenerateLink({
             name,
             stickers: selectedStickers || window.selectedStickers || [],
-            img: cloudinaryUrl
+            img: cloudinaryUrl,
+            size
         });
                 openFacebookShare(link, { quote: `${name || 'Bạn'}`, hashtag: 'ZaloPay' });
         if (navigator.clipboard?.writeText) {
@@ -148,6 +152,12 @@ btnNext.onclick = function() {
             sections[1].style.display = 'none';
             sections[2].style.display = 'block';
             sections[2].classList.add('fade-in-up');
+            // Freeze tagline as soon as chuyển qua chọn sticker
+            if (!window.chosenTaglineFrozen) {
+                window.chosenTagline = window._taglineInitial;
+                window.chosenTaglineFrozen = true;
+                applyTaglineToContainers(window.chosenTagline);
+            }
         }, 500);
     }else {
         sections[1].classList.add('slide-out');
@@ -156,13 +166,13 @@ btnNext.onclick = function() {
             sections[3].style.display = 'block';
             sections[3].classList.add('fade-in-up');
 
-            const hammer = sections[3].querySelector(".artboard");
+            const hammer = sections[3].querySelector(".artboard-2");
             const box = sections[3].querySelector(".rectangle-2");
             const nameDisplay = sections[3].querySelector(".text-wrapper-3");
             nameDisplay.textContent = name;
 
             setTimeout(() => {
-                hammer.classList.add('vector');
+                hammer.classList.add('shake-hammer');
                 setTimeout(() => {
                     box.classList.add('opened');
                     nameDisplay.classList.add('show');
@@ -333,13 +343,13 @@ function renderResult(name, stickers) {
         group.querySelectorAll('.icon, .img, .icon-2').forEach(el => el.remove());
 
         if (stickers[0]){
-            group.insertAdjacentHTML('beforeend', `<img class="icon" src="${stickers[0]}" alt="Sticker 1">`);
+            group.insertAdjacentHTML('beforeend', `<img class="icon sticker-pop" src="${stickers[0]}" alt="Sticker 1">`);
         }
         if (stickers[1]) {
-            group.insertAdjacentHTML('beforeend', `<img class="img" src="${stickers[1]}" alt="Sticker 2">`);
+            group.insertAdjacentHTML('beforeend', `<img class="img sticker-pop" src="${stickers[1]}" alt="Sticker 2">`);
         }
         if (stickers[2]) {
-            group.insertAdjacentHTML('beforeend', `<img class="icon-2" src="${stickers[2]}" alt="Sticker 3">`);
+            group.insertAdjacentHTML('beforeend', `<img class="icon-2 sticker-pop" src="${stickers[2]}" alt="Sticker 3">`);
         }
     })
 }
@@ -379,6 +389,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (chooseSizeBtns) chooseSizeBtns.style.display = 'flex';
         });
     }
+    // Gán tagline ban đầu vào các container hiển thị
+    applyTaglineToContainers(window.chosenTagline);
     // Nút chuyển trong section 1:1 và 9:16
     const switchSizeBtns = document.querySelectorAll('.size .size-btn, .size-9-16 .size-btn');
     switchSizeBtns.forEach(btn => {
@@ -430,6 +442,44 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll("img").forEach(img => {
         img.setAttribute("crossorigin", "anonymous");
     });
+
+    // Soft reset function and wire to "thử lại" menu items
+    function softReset(goTo = 'intro') {
+        // hide all
+        sections.forEach(sec => sec.style.display = 'none');
+        // reset flags
+        isConfirmMode = false;
+        // reset input
+        if (inputField) {
+            inputField.value = '';
+            if (nameCount) nameCount.textContent = 'Tên của bạn (0/12)';
+        }
+        // reset stickers
+        window.selectedStickers = [];
+        selectedStickers = [];
+        document.querySelectorAll('.tick-icon').forEach(el => el.remove());
+        const counter = document.querySelector('.x-c-nh-n-1');
+        if (counter) counter.textContent = '0/3';
+        const bg = document.querySelector('.x-c-nh-n-wrapper-1');
+        if (bg) { bg.style.backgroundColor = ''; bg.style.borderColor = ''; }
+        // re-pick tagline for a fresh start
+        window._taglineInitial = overrideTag || TAGLINES[Math.floor(Math.random() * TAGLINES.length)];
+        window.chosenTagline = window._taglineInitial;
+        window.chosenTaglineFrozen = false;
+        applyTaglineToContainers(window.chosenTagline);
+
+        if (goTo === 'intro') {
+            sections[0].style.display = 'block';
+            sections[0].classList.add('fade-in-up');
+        } else if (goTo === 'name') {
+            sections[1].style.display = 'block';
+            sections[1].classList.add('fade-in-up');
+        }
+    }
+
+    // Wire retry menu items (2nd item in each menu)
+    document.querySelectorAll('.kt-qu-phin-bn-mi .menu .menu-item:nth-child(2), .size .menu .menu-item:nth-child(2), .size-9-16 .menu .menu-item:nth-child(2)')
+      .forEach(btn => btn.addEventListener('click', () => softReset('intro')));
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -590,6 +640,7 @@ document.addEventListener("DOMContentLoaded", () => {
             firstSection.classList.add("fade-in-up");
         });
     }
+    // (Removed) "ĐẬP HỘP NGAY" in result section per requirement; lives only in generate.js page
 });
 
 
@@ -632,7 +683,23 @@ function showErrorSlide(message) {
         const retryBtn = errorSlide.querySelector(".x-c-nh-wrapper");
         if (retryBtn) {
             retryBtn.onclick = () => {
-                window.location.reload(); // reload lại trang
+                // Soft reset flow về bước nhập tên, giữ tagline đã freeze
+                document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
+                // reset selections
+                window.selectedStickers = [];
+                selectedStickers = [];
+                document.querySelectorAll('.tick-icon').forEach(el => el.remove());
+                const counter = document.querySelector('.x-c-nh-n-1');
+                if (counter) counter.textContent = '0/3';
+                const bg = document.querySelector('.x-c-nh-n-wrapper-1');
+                if (bg) {
+                    bg.style.backgroundColor = '';
+                    bg.style.borderColor = '';
+                }
+                // giữ tên nhập
+                const step2 = sections[1];
+                step2.style.display = 'block';
+                step2.classList.add('fade-in-up');
             }
         }
     }
