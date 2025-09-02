@@ -95,8 +95,8 @@ module.exports = function handler(req, res) {
                                 <div class="layer-2"></div>
                                 <div class="layer-3"></div>
                             </div>
-                            <div class="text-wrapper">Ôi!</div>
-                            <p class="loi-mot-chut">Lỗi một chút. Vui lòng thử lại sau nhé.</p>
+                            <div class="text-wrapper">Oop!</div>
+                            <p class="loi-mot-chut">Lỗi một chút.,<br/>Xin lỗi bạn nhiều chút. Mình thử lại nha</p>
                             <div class="group">
                                 <a href="${retryUrl}" class="x-c-nh-wrapper" style="text-decoration:none">
                                     <div class="x-c-nh-n">Thử lại</div>
