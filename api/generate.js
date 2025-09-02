@@ -72,8 +72,9 @@ module.exports = function handler(req, res) {
                             ${isNineSixteen
                                 ? `
                                 <div class="overlap">
+                                    <!-- đưa vector trở lại, đặt tách khỏi group-wrapper để dễ kiểm soát chồng lớp -->
+                                    <img class="vector" src="/assets/img/Vector-2.png" />
                                     <div class="group-wrapper">
-                                        <!-- 9:16 nền đã có ribbon, bỏ vector để tránh trùng -->
                                         <div class="group">
                                             <div class="name-label text-wrapper">${name || 'Bạn'}</div>
                                             <div class="text-wrapper-2">${tagline}</div>
