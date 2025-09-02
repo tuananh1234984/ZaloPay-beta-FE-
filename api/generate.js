@@ -43,6 +43,14 @@ module.exports = function handler(req, res) {
 
     const layout = (req.query.layout === 'clean') ? 'layout-clean' : 'layout-card';
     const tagline = String(tag || phrase || 'ngoan xinh iu');
+
+    // Empty-state logic: show error screen when forced or when there is no meaningful data
+    const forceEmpty = String(req.query.empty || '') === '1' || String(req.query.state || '') === 'empty';
+    const noName = !name || String(name).trim() === '';
+    const noTag = !tag && !phrase;
+    const noStickers = stickerList.length === 0;
+    const noCustomImage = !image && !img; // og default still exists but not a custom generated image
+    const isEmptyState = forceEmpty || (noName && noTag && noStickers && noCustomImage);
     const ogHtml = `
         <!DOCTYPE html>
         <html lang="vi">
@@ -66,15 +74,48 @@ module.exports = function handler(req, res) {
                 <link rel="stylesheet" href="/css/global.css" />
             </head>
             <body class="page-generate ${layout}">
-                <section>
-                    <div class="giao-din-kt-qu-hin ${sizeClass}">
+                ${isEmptyState
+                    ? `
+                    <section class="empty">
                         <div class="div">
-                            ${isNineSixteen
-                                ? `
-                                <div class="overlap">
-                                    <!-- đưa vector trở lại, đặt tách khỏi group-wrapper để dễ kiểm soát chồng lớp -->
-                                    <img class="vector" src="/assets/img/Vector-2.png" />
-                                    <div class="group-wrapper">
+                            <div class="overlap-group">
+                                <div class="layer"></div>
+                                <div class="layer-2"></div>
+                                <div class="layer-3"></div>
+                            </div>
+                            <div class="text-wrapper">Ôi!</div>
+                            <p class="loi-mot-chut">Lỗi một chút. Vui lòng thử lại sau nhé.</p>
+                            <div class="group">
+                                <a href="/" class="x-c-nh-wrapper" style="text-decoration:none">
+                                    <div class="x-c-nh-n">Thử lại</div>
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+                    `
+                    : `
+                    <section>
+                        <div class="giao-din-kt-qu-hin ${sizeClass}">
+                            <div class="div">
+                                ${isNineSixteen
+                                    ? `
+                                    <div class="overlap">
+                                        <!-- đưa vector trở lại, đặt tách khỏi group-wrapper để dễ kiểm soát chồng lớp -->
+                                        <img class="vector" src="/assets/img/Vector-2.png" />
+                                        <div class="group-wrapper">
+                                            <div class="group">
+                                                <div class="name-label text-wrapper">${name || 'Bạn'}</div>
+                                                <div class="text-wrapper-2">${tagline}</div>
+                                                ${toRender[0] ? `<img class="icon" src="${toRender[0]}" alt="Sticker 1" />` : ''}
+                                                ${toRender[1] ? `<img class="img" src="${toRender[1]}" alt="Sticker 2" />` : ''}
+                                                ${toRender[2] ? `<img class="icon-2" src="${toRender[2]}" alt="Sticker 3" />` : ''}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    `
+                                    : `
+                                    <div class="overlap">
+                                        <img class="vector" src="/assets/img/Vector-2.png" />
                                         <div class="group">
                                             <div class="name-label text-wrapper">${name || 'Bạn'}</div>
                                             <div class="text-wrapper-2">${tagline}</div>
@@ -83,30 +124,19 @@ module.exports = function handler(req, res) {
                                             ${toRender[2] ? `<img class="icon-2" src="${toRender[2]}" alt="Sticker 3" />` : ''}
                                         </div>
                                     </div>
+                                    `
+                                }
+                                <p class="phi-n-b-n-n-y-qu-b-n">Phiên bản này quá đã<br/>Bạn đã đập hộp chưa?</p>
+                                <div class="group-wrapper-1">
+                                    <a href="/" class="x-c-nh-n-wrapper" style="text-decoration: none;">
+                                        <div class="x-c-nh-n">ĐẬP HỘP NGAY</div>
+                                    </a>
                                 </div>
-                                `
-                                : `
-                                <div class="overlap">
-                                    <img class="vector" src="/assets/img/Vector-2.png" />
-                                    <div class="group">
-                                        <div class="name-label text-wrapper">${name || 'Bạn'}</div>
-                                        <div class="text-wrapper-2">${tagline}</div>
-                                        ${toRender[0] ? `<img class="icon" src="${toRender[0]}" alt="Sticker 1" />` : ''}
-                                        ${toRender[1] ? `<img class="img" src="${toRender[1]}" alt="Sticker 2" />` : ''}
-                                        ${toRender[2] ? `<img class="icon-2" src="${toRender[2]}" alt="Sticker 3" />` : ''}
-                                    </div>
-                                </div>
-                                `
-                            }
-                            <p class="phi-n-b-n-n-y-qu-b-n">Phiên bản này quá đã<br/>Bạn đã đập hộp chưa?</p>
-                            <div class="group-wrapper-1">
-                                <a href="/" class="x-c-nh-n-wrapper" style="text-decoration: none;">
-                                    <div class="x-c-nh-n">ĐẬP HỘP NGAY</div>
-                                </a>
                             </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                    `
+                }
             </body>
         </html>
     `;
