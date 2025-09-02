@@ -2840,9 +2840,15 @@ button .x-c-nh-n {
     top: 699px;
     left: 102px;
 }
+.giao-din-kt-qu-hin .group-wrapper a {
+    text-decoration: none;
+    color: inherit;
+}
 
 .giao-din-kt-qu-hin .x-c-nh-n-wrapper {
     position: relative;
+    display: block; /* ensure anchor renders as a box so height applies */
+    width: 100%;
     height: 43px;
     background-color: #0033c9;
     border-radius: 30px;
