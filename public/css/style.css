@@ -1366,6 +1366,33 @@ button .x-c-nh-n {
 /* Nút ĐẬP HỘP ở màn kết quả */
 /* (Removed) reopen-box-btn styles; button now only exists in generate.js page */
 
+/* Generate page layouts: default is 'card' (with frame). Use 'layout-clean' to hide frame */
+.page-generate.layout-clean .overlap {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Align generate page card layout to match in-app share screens */
+.page-generate.layout-card .giao-din-kt-qu-hin.size .overlap {
+    position: absolute;
+    width: 354px;
+    height: 354px;
+    top: 245px;
+    left: 18px;
+    background: #ffffff;
+    box-shadow: 0px 0px 3px #00000040;
+}
+
+.page-generate.layout-card .giao-din-kt-qu-hin.size-9-16 .overlap {
+    position: absolute;
+    width: 282px;
+    height: 500px;
+    top: 170px;
+    left: 50px;
+    background: #ffffff;
+    box-shadow: 0px 0px 3px #00000040;
+}
+
 .kt-qu-phin-bn-mi .popup-box {
     background: #fff;
     border-radius: 12px;
@@ -2776,6 +2803,27 @@ button .x-c-nh-n {
     top: -50px;
     left: 10px;
     transform: rotate(10.96deg);
+
+/* ===== Generate page final overrides (ensure consistent card size) ===== */
+.page-generate.layout-card .giao-din-kt-qu-hin.size .overlap {
+    position: absolute !important;
+    width: 354px !important;
+    height: 354px !important;
+    top: 245px !important;
+    left: 18px !important;
+    background: #ffffff !important;
+    box-shadow: 0px 0px 3px #00000040 !important;
+}
+
+.page-generate.layout-card .giao-din-kt-qu-hin.size-9-16 .overlap {
+    position: absolute !important;
+    width: 282px !important;
+    height: 500px !important;
+    top: 170px !important;
+    left: 50px !important;
+    background: #ffffff !important;
+    box-shadow: 0px 0px 3px #00000040 !important;
+}
     object-fit: cover;
 }
 

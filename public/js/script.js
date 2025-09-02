@@ -31,10 +31,7 @@ function getShareBase() {
 
 // Dựng URL /api/generate giống nhánh final-web-1 (chỉ cần name, stickers, img)
 function buildGenerateLink({ name, stickers, img, size }) {
-    const prodBase = 'https://zalo-pay-beta.vercel.app';
-    const base = /localhost|127\.|0\.0\.0\.0/.test(window.location.origin)
-        ? prodBase
-        : window.location.origin;
+    const base = getShareBase(); // Always use public prod domain to avoid preview auth
     const stickersParam = Array.isArray(stickers) ? stickers.join(',') : (stickers || '');
         const v = Date.now().toString(36);
     const sizeParam = size ? `&size=${encodeURIComponent(size)}` : '';
