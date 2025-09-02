@@ -40,6 +40,7 @@ module.exports = function handler(req, res) {
         ? '<link rel="stylesheet" href="/css/style.css" />'
         : '<link rel="stylesheet" href="/css/style.css" />';
 
+    const layout = (req.query.layout === 'clean') ? 'layout-clean' : 'layout-card';
     const ogHtml = `
         <!DOCTYPE html>
         <html lang="vi">
@@ -60,7 +61,7 @@ module.exports = function handler(req, res) {
                 ${sizeStyle}
                 <link rel="stylesheet" href="/css/global.css" />
             </head>
-            <body>
+            <body class="page-generate ${layout}">
                 <section>
                     <div class="giao-din-kt-qu-hin ${sizeClass}">
                         <div class="div">
