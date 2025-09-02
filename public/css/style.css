@@ -2892,8 +2892,10 @@ button .x-c-nh-n {
 .empty .x-c-nh-wrapper {
     position: relative;
     height: 43px;
-    background-color: #09cd6b;
+    background-color: #09cd6b; /* xanh lá khác với CTA xanh lam */
     border-radius: 30px;
+    display: block;
+    width: 100%;
 }
 
 .empty .x-c-nh-n {
