@@ -2766,12 +2766,12 @@ button .x-c-nh-n {
 .giao-din-kt-qu-hin .x-c-nh-n-wrapper {
     position: absolute;
     display: block; /* ensure anchor renders as a box so height applies */
-    width: 302px;
+    width: 201px;
     height: 43px;
     background-color: #0033c9;
     border-radius: 30px;
     bottom: 50px;
-    left: 44px;
+    left: 88px;
 } 
 
 .giao-din-kt-qu-hin .x-c-nh-n {
