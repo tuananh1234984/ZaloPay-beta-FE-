@@ -1366,6 +1366,13 @@ button .x-c-nh-n {
 /* Nút ĐẬP HỘP ở màn kết quả */
 /* (Removed) reopen-box-btn styles; button now only exists in generate.js page */
 
+/* Remove frame on generate.js page only (keep other screens intact) */
+.giao-din-kt-qu-hin.size .overlap,
+.giao-din-kt-qu-hin.size-9-16 .overlap {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
 .kt-qu-phin-bn-mi .popup-box {
     background: #fff;
     border-radius: 12px;
