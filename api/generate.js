@@ -24,7 +24,8 @@ module.exports = function handler(req, res) {
 
     // Minimal HTML like final-web-1 (OG meta carries the image)
     // Canonical URL must always point to public prod domain to avoid preview auth
-    const PROD_BASE = 'https://zalo-pay-beta.vercel.app';
+    // Force canonical to the live production domain (-fe variant)
+    const PROD_BASE = 'https://zalo-pay-beta-fe.vercel.app';
     const canonicalUrl = (() => {
         try {
             const query = req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '';
@@ -53,6 +54,8 @@ module.exports = function handler(req, res) {
                 <meta property="og:description" content="Phiên bản này quá đã. Bạn đã đập hộp chưa?" />
                 <meta property="og:image" content="${imageUrl}" />
                 <meta property="og:image:secure_url" content="${imageUrl}" />
+                <meta property="og:image:width" content="${isNineSixteen ? '1080' : '1200'}" />
+                <meta property="og:image:height" content="${isNineSixteen ? '1920' : '1200'}" />
                 <meta property="og:url" content="${canonicalUrl}" />
                 <meta property="twitter:card" content="summary_large_image" />
                 <meta property="twitter:image" content="${imageUrl}" />

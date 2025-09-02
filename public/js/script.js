@@ -22,7 +22,8 @@ window._taglineInitial = overrideTag || TAGLINES[Math.floor(Math.random() * TAGL
 window.chosenTagline = window._taglineInitial;
 
 // ===== Share helpers (ensure Facebook always sees a public OG page) =====
-const PROD_BASE = 'https://zalo-pay-beta.vercel.app';
+// Use the live production domain (-fe) to avoid Vercel preview or missing deployment URLs
+const PROD_BASE = 'https://zalo-pay-beta-fe.vercel.app';
 
 // Force dùng domain production để Facebook không gặp preview/private
 function getShareBase() {
