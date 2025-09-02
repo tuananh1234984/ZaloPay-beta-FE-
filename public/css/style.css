@@ -2718,8 +2718,8 @@ button .x-c-nh-n {
     position: absolute;
     width: 354px;
     height: 354px;
-    top: 195px;
-    left: 18px;
+    top: 111px;
+    left: 40px;
 }
 
 .giao-din-kt-qu-hin .overlap {
@@ -2742,8 +2742,8 @@ button .x-c-nh-n {
     position: absolute;
     width: 184px;
     height: 216px;
-    top: 150px;
-    left: 60px;
+    top: 64px;
+    left: 88px;
 }
 
 .giao-din-kt-qu-hin .overlap-group-wrapper {
@@ -2804,28 +2804,10 @@ button .x-c-nh-n {
     left: 10px;
     transform: rotate(10.96deg);
 
-/* ===== Generate page final overrides (ensure consistent card size) ===== */
-.page-generate.layout-card .giao-din-kt-qu-hin.size .overlap {
-    position: absolute !important;
-    width: 354px !important;
-    height: 354px !important;
-    top: 245px !important;
-    left: 18px !important;
-    background: #ffffff !important;
-    box-shadow: 0px 0px 3px #00000040 !important;
 }
 
-.page-generate.layout-card .giao-din-kt-qu-hin.size-9-16 .overlap {
-    position: absolute !important;
-    width: 282px !important;
-    height: 500px !important;
-    top: 170px !important;
-    left: 50px !important;
-    background: #ffffff !important;
-    box-shadow: 0px 0px 3px #00000040 !important;
-}
-    object-fit: cover;
-}
+
+
 
 .giao-din-kt-qu-hin .icon-2 {
     position: absolute;
