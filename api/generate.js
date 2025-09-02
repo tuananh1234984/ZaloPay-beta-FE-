@@ -51,6 +51,18 @@ module.exports = function handler(req, res) {
     const noStickers = stickerList.length === 0;
     const noCustomImage = !image && !img; // og default still exists but not a custom generated image
     const isEmptyState = forceEmpty || (noName && noTag && noStickers && noCustomImage);
+    // Build a retry URL that removes empty/state flags but keeps other params
+    const retryUrl = (() => {
+        try {
+            const rawQuery = req.url.includes('?') ? req.url.substring(req.url.indexOf('?') + 1) : '';
+            const sp = new URLSearchParams(rawQuery);
+            sp.delete('empty');
+            sp.delete('state');
+            const q = sp.toString();
+            return `${PROD_BASE}/api/generate${q ? `?${q}` : ''}`;
+        } catch { return `${PROD_BASE}/`; }
+    })();
+
     const ogHtml = `
         <!DOCTYPE html>
         <html lang="vi">
@@ -86,7 +98,7 @@ module.exports = function handler(req, res) {
                             <div class="text-wrapper">Ôi!</div>
                             <p class="loi-mot-chut">Lỗi một chút. Vui lòng thử lại sau nhé.</p>
                             <div class="group">
-                                <a href="/" class="x-c-nh-wrapper" style="text-decoration:none">
+                                <a href="${retryUrl}" class="x-c-nh-wrapper" style="text-decoration:none">
                                     <div class="x-c-nh-n">Thử lại</div>
                                 </a>
                             </div>
