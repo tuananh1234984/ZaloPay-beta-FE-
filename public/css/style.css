@@ -221,11 +221,23 @@ html, body {
 }
 
 /* Hiệu ứng bổ sung theo style sự kiện */
-.sticker-pop { animation: stickerPop 420ms cubic-bezier(.2, .8, .2, 1) both; }
+/*
+   Lưu ý: Animation sử dụng transform nên sẽ ghi đè transform tĩnh.
+   Để giữ nguyên góc xoay cơ bản của từng phần tử (ví dụ icon-2),
+   ta đưa góc xoay vào biến CSS --base-rotate và dùng trong keyframes.
+*/
+.sticker-pop {
+    /* Giá trị mặc định nếu phần tử không đặt góc riêng */
+    --base-rotate: 0deg;
+    --pop-rotate-start: -8deg;
+    --pop-rotate-mid: 3deg;
+    --pop-rotate-end: 0deg;
+    animation: stickerPop 420ms cubic-bezier(.2, .8, .2, 1) both;
+}
 @keyframes stickerPop {
-    0% { opacity: 0; transform: scale(.6) rotate(-8deg); }
-    60% { opacity: 1; transform: scale(1.08) rotate(3deg); }
-    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    0% { opacity: 0; transform: scale(.6) rotate(calc(var(--base-rotate) + var(--pop-rotate-start))); }
+    60% { opacity: 1; transform: scale(1.08) rotate(calc(var(--base-rotate) + var(--pop-rotate-mid))); }
+    100% { opacity: 1; transform: scale(1) rotate(calc(var(--base-rotate) + var(--pop-rotate-end))); }
 }
 
 .cta-pulse { animation: ctaPulse 1.4s ease-in-out infinite; }
@@ -2305,7 +2317,8 @@ button .x-c-nh-n {
     height: 41px;
     top: -50px;
     right: -10px;
-    transform: rotate(-12deg);
+    --base-rotate: -12deg;
+    transform: rotate(var(--base-rotate));
     object-fit: cover;
 }
 
@@ -2315,7 +2328,8 @@ button .x-c-nh-n {
     height: 61px;
     top: -65px;
     left: 10px;
-    transform:rotate(10.96deg);
+    --base-rotate: 10.96deg;
+    transform: rotate(var(--base-rotate));
     object-fit: cover;
 }
 
@@ -2325,7 +2339,9 @@ button .x-c-nh-n {
     height: 51px;
     top: 120px;
     left: 11px;
-    transform: rotate(-15.78deg);
+    /* Lưu góc xoay cơ bản để animation không phá vỡ */
+    --base-rotate: -15.78deg;
+    transform: rotate(var(--base-rotate));
     object-fit: cover;
 }
 
