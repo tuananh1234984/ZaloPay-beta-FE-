@@ -2021,13 +2021,16 @@ button .x-c-nh-n {
     background-size: 100% 100%;
 }
 
-.size-9-16 .group-wrapper::before {
+.size-9-16 .group-wrapper::before { display: none; }
+
+/* Che phần watermark ở giữa để không trùng với vector, giữ nguyên ribbon trên/dưới */
+.size-9-16 .group-wrapper::after {
     content: "";
     position: absolute;
     left: 0;
-    top: 0;
+    top: 70px;     /* bắt đầu dưới ribbon trên */
     width: 100%;
-    height: 64px; /* mask the built-in ribbon area */
+    height: 330px; /* chừa lại ribbon dưới */
     background: #ffffff;
 }
 
