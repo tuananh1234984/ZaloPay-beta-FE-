@@ -73,7 +73,7 @@ module.exports = function handler(req, res) {
                                 ? `
                                 <div class="overlap">
                                     <div class="group-wrapper">
-                                        <img class="vector" src="/assets/img/Vector-2.png" />
+                                        <!-- 9:16 nền đã có ribbon, bỏ vector để tránh trùng -->
                                         <div class="group">
                                             <div class="name-label text-wrapper">${name || 'Bạn'}</div>
                                             <div class="text-wrapper-2">${tagline}</div>
@@ -98,7 +98,7 @@ module.exports = function handler(req, res) {
                                 `
                             }
                             <p class="phi-n-b-n-n-y-qu-b-n">Phiên bản này quá đã<br/>Bạn đã đập hộp chưa?</p>
-                            <div class="group-wrapper">
+                            <div class="group-wrapper-1">
                                 <a href="/" class="x-c-nh-n-wrapper" style="text-decoration: none;">
                                     <div class="x-c-nh-n">ĐẬP HỘP NGAY</div>
                                 </a>
