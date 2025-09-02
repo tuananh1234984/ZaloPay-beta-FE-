@@ -23,14 +23,14 @@ module.exports = function handler(req, res) {
     const toRender = stickerList.length ? stickerList.slice(0, 3) : fallbackStickers;
 
     // Minimal HTML like final-web-1 (OG meta carries the image)
-    // Canonical URL to help FB cache correctly
+    // Canonical URL must always point to public prod domain to avoid preview auth
+    const PROD_BASE = 'https://zalo-pay-beta.vercel.app';
     const canonicalUrl = (() => {
         try {
-            const proto = req.headers['x-forwarded-proto'] || 'https';
-            const host = req.headers['x-forwarded-host'] || req.headers.host || 'zalo-pay-beta.vercel.app';
-            return `${proto}://${host}${req.url}`;
+            const query = req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '';
+            return `${PROD_BASE}/api/generate${query}`;
         } catch {
-            return 'https://zalo-pay-beta.vercel.app/api/generate';
+            return `${PROD_BASE}/api/generate`;
         }
     })();
 
@@ -51,6 +51,7 @@ module.exports = function handler(req, res) {
                 <meta property="og:title" content="${name || "Bạn"} - Phiên bản mới ZaloPay" />
                 <meta property="og:description" content="Phiên bản này quá đã. Bạn đã đập hộp chưa?" />
                 <meta property="og:image" content="${imageUrl}" />
+                <meta property="og:image:secure_url" content="${imageUrl}" />
                 <meta property="og:url" content="${canonicalUrl}" />
                 <meta property="twitter:card" content="summary_large_image" />
                 <meta property="twitter:image" content="${imageUrl}" />
