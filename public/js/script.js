@@ -616,20 +616,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 const dataURL = canvas.toDataURL("image/png");
                 if (dataURL === "data:,") throw new Error("canvas trống!");
 
-                const blob = await (await fetch(dataURL)).blob();
-
-                // Upload Cloudinary
-                const formData = new FormData();
-                formData.append("file", blob, "capture.png");
-                formData.append("upload_preset", "zalopay_unsigned");
-
-                const res = await fetch("https://api.cloudinary.com/v1_1/den7ju8t4/image/upload", {
+                // Upload thông qua API server (ẩn Cloudinary API)
+                const res = await fetch("/api/upload", {
                     method: "POST",
-                    body: formData,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ dataUrl: dataURL, folder: 'zalopay-shares', tags: 'zalopay,share' })
                 });
                 const data = await res.json();
 
-                if (data.secure_url) {
+                if (res.ok && data.secure_url) {
                     const name = document.querySelector('.input-field')?.value || 'Bạn';
                     window.createAndOpenShareLink({
                         canvas,
