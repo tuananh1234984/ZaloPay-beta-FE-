@@ -151,6 +151,97 @@ btnPlay.onclick = function() {
     }, 500);
 };
 
+// ---------- Loading overlay + pre-upload helpers ----------
+function ensureLoadingOverlay() {
+    let overlay = document.getElementById('loading-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'loading-overlay';
+        overlay.style.cssText = [
+            'position:fixed', 'inset:0', 'display:none', 'align-items:center', 'justify-content:center',
+            'background:rgba(255,255,255,0.8)', 'z-index:9999', 'font-family: Aeonik, Helvetica, Arial, sans-serif',
+            'color:#0033c9', 'text-align:center', 'user-select:none', 'pointer-events:none'
+        ].join(';');
+        const box = document.createElement('div');
+        box.style.cssText = 'background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 8px 30px rgba(0,0,0,.12)';
+        box.innerHTML = '<div style="font-weight:700;font-size:18px">Đang tạo ảnh…</div><div id="loading-elapsed" style="margin-top:6px;font-size:14px;color:#666">0.0s</div>';
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+    }
+    return overlay;
+}
+
+function showLoading(initialText = 'Đang xử lý…') {
+    const overlay = ensureLoadingOverlay();
+    overlay.querySelector('div > div')?.insertAdjacentText ? (overlay.querySelector('div > div').textContent = initialText) : null;
+    overlay.style.display = 'flex';
+    overlay.dataset.start = String(performance.now());
+    const elapsedEl = overlay.querySelector('#loading-elapsed');
+    overlay._timer && clearInterval(overlay._timer);
+    overlay._timer = setInterval(() => {
+        const start = Number(overlay.dataset.start || '0');
+        const s = Math.max(0, performance.now() - start) / 1000;
+        if (elapsedEl) elapsedEl.textContent = s.toFixed(1) + 's';
+    }, 100);
+    return overlay;
+}
+
+function hideLoading(finalText) {
+    const overlay = ensureLoadingOverlay();
+    if (finalText) {
+        const title = overlay.querySelector('div > div');
+        if (title) title.textContent = finalText;
+    }
+    const t = overlay._timer; if (t) clearInterval(t);
+    setTimeout(() => { overlay.style.display = 'none'; }, 300);
+}
+
+async function preUploadCard(name, stickers, size = '1-1') {
+    // Create off-screen capture container
+    const host = document.createElement('div');
+    host.style.cssText = 'position:absolute;left:-99999px;top:-99999px;width:390px;height:844px;overflow:hidden;background:#fff;';
+    host.innerHTML = `
+      <div class="giao-din-kt-qu-hin ${size === '9-16' ? 'size-9-16' : 'size'}">
+        <div class="div">
+          <div class="overlap">
+            <img class="vector" src="/assets/img/Vector-2.png"/>
+            <div class="group">
+              <div class="name-label text-wrapper"></div>
+              <div class="text-wrapper-2"></div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    document.body.appendChild(host);
+    // Render data into it
+    try {
+        // Sync values
+        host.querySelector('.name-label').textContent = name || 'Bạn';
+        host.querySelector('.text-wrapper-2').textContent = window.chosenTagline || '';
+        // Place stickers
+        const group = host.querySelector('.group');
+        if (group) {
+            if (stickers?.[0]) group.insertAdjacentHTML('beforeend', `<img class="icon" src="${stickers[0]}" alt="Sticker 1">`);
+            if (stickers?.[1]) group.insertAdjacentHTML('beforeend', `<img class="img" src="${stickers[1]}" alt="Sticker 2">`);
+            if (stickers?.[2]) group.insertAdjacentHTML('beforeend', `<img class="icon-2" src="${stickers[2]}" alt="Sticker 3">`);
+        }
+        // Wait a frame for layout
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+        const target = host.querySelector('.overlap') || host;
+        const canvas = await html2canvas(target, { useCORS: true, allowTaint: true, scale: 2, backgroundColor: '#ffffff' });
+        const dataURL = canvas.toDataURL('image/png');
+        if (dataURL === 'data:,') throw new Error('canvas trống');
+        const t0 = performance.now();
+        const res = await fetch('/api/upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataUrl: dataURL, folder: 'zalopay-shares', tags: 'zalopay,preupload' }) });
+        const json = await res.json();
+        const dt = performance.now() - t0;
+        if (!res.ok || !json.secure_url) throw new Error('upload failed');
+        return { url: json.secure_url, durationMs: dt };
+    } finally {
+        host.remove();
+    }
+}
+
 inputField.addEventListener('input', function() {
     const len = inputField.value.length;
     nameCount.textContent = `Tên của bạn (${len}/12)`;
@@ -188,6 +279,17 @@ btnNext.onclick = function() {
             const box = sections[3].querySelector(".rectangle-2");
             const nameDisplay = sections[3].querySelector(".text-wrapper-3");
             nameDisplay.textContent = name;
+
+            // Start pre-upload in background with loading overlay and measure server time
+            const overlay = showLoading('Đang tạo ảnh để chia sẻ…');
+            const stickersNow = window.selectedStickers || [];
+            preUploadCard(name, stickersNow, '1-1')
+              .then(({ url, durationMs }) => {
+                  window.lastUploadedUrl = url;
+                  const s = (durationMs / 1000).toFixed(1);
+                  hideLoading(`Đã tạo xong trong ${s}s`);
+              })
+              .catch(() => hideLoading());
 
             setTimeout(() => {
                 hammer.classList.add('shake-hammer');
@@ -616,20 +718,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 const dataURL = canvas.toDataURL("image/png");
                 if (dataURL === "data:,") throw new Error("canvas trống!");
 
-                const blob = await (await fetch(dataURL)).blob();
-
-                // Upload Cloudinary
-                const formData = new FormData();
-                formData.append("file", blob, "capture.png");
-                formData.append("upload_preset", "zalopay_unsigned");
-
-                const res = await fetch("https://api.cloudinary.com/v1_1/den7ju8t4/image/upload", {
+                // Upload thông qua API server (ẩn Cloudinary API)
+                const res = await fetch("/api/upload", {
                     method: "POST",
-                    body: formData,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ dataUrl: dataURL, folder: 'zalopay-shares', tags: 'zalopay,share' })
                 });
                 const data = await res.json();
 
-                if (data.secure_url) {
+                if (res.ok && data.secure_url) {
                     const name = document.querySelector('.input-field')?.value || 'Bạn';
                     window.createAndOpenShareLink({
                         canvas,
