@@ -13,14 +13,6 @@
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content="https://zalo-pay-beta.vercel.app/assets/img/ZZ.png">
-    <!-- Performance: preconnect to external origins used later -->
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="preconnect" href="https://api.cloudinary.com" crossorigin>
-    <!-- Performance: preload likely LCP hero images -->
-    <link rel="preload" as="image" href="./assets/img/Artboard%201%206.png">
-    <link rel="preload" as="image" href="./assets/img/Vector.png">
-    <link rel="preload" as="image" href="./assets/img/Layer_1.png">
-    <link rel="preload" as="image" href="./assets/img/Asset-15.png">
     <link rel="stylesheet" href="./css/styleguile.css">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/global.css">
@@ -44,7 +36,7 @@
                             <div class="rectangle"></div>
                             <div class="p-h-p">ĐẬP<br/>HỘP</div>
                             <img class="asset" src="./assets/img/Asset-15.png"/>
-                            <img class="artboard" src="./assets/img/Artboard 1 6.png" fetchpriority="high"/>
+                            <img class="artboard" src="./assets/img/Artboard 1 6.png"/>
                         </div>
                         <img class="vector" src="./assets/img/Vector.png"/>
                     </div>
@@ -404,4 +396,5 @@
     </div>
 </section>
     <script src="./js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </html>

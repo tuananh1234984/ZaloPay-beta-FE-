@@ -1,15 +1,4 @@
 const sections = document.querySelectorAll('section');
-// Hint browsers to decode images without blocking rendering and lazy-load offscreen ones
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('img').forEach((img, idx) => {
-        // Keep above-the-fold images eager; lazy-load others
-        const isHero = img.classList.contains('artboard') || img.classList.contains('layer') || img.classList.contains('vector') || img.closest('section') === sections[0];
-        if (!isHero) {
-            img.loading = img.loading || 'lazy';
-        }
-        img.decoding = img.decoding || 'async';
-    });
-});
 // --- Tagline randomization (with optional override via ?tag= or ?phrase=) ---
 const TAGLINES = [
     "ngoan xinh iu",
@@ -449,25 +438,11 @@ document.addEventListener('DOMContentLoaded', function() {
             renderResult(document.querySelector('.kt-qu-phin-bn-mi .name-label').innerText, selectedStickers);
         })
     })
-    // Tải xuống phần dưới dạng hình ảnh
-    async function ensureHtml2Canvas() {
-        if (window.html2canvas) return window.html2canvas;
-        await new Promise((resolve, reject) => {
-            const s = document.createElement('script');
-            s.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
-            s.defer = true;
-            s.onload = resolve;
-            s.onerror = reject;
-            document.head.appendChild(s);
-        });
-        return window.html2canvas;
-    }
-    // Tải xuống phần dưới dạng hình ảnh
-    async function downloadSectionAsImage(section) {
-        const html2canvas = await ensureHtml2Canvas();
+
+    function downloadSectionAsImage(section) {
         html2canvas(section, {useCORS: true, allowTaint: true, scale: 2}).then(canvas => {
             const link = document.createElement('a');
-            link.download = 'zalopay-result.png';
+            link.download = 'zalopay-result.png'
             link.href = canvas.toDataURL('image/png');
             link.click();
         });
@@ -631,7 +606,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 // Chụp canvas
-                const html2canvas = await ensureHtml2Canvas();
                 const canvas = await html2canvas(captureTarget, {
                     useCORS: true,
                     allowTaint: true,
