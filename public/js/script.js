@@ -47,15 +47,28 @@ function normalizeStickerUrl(u) {
 }
 
 // Dựng URL /api/generate giống nhánh final-web-1 (thêm truyền tagline)
-function buildGenerateLink({ name, stickers, img, size, tag }) {
-    const base = getShareBase(); // Always use public prod domain to avoid preview auth
+function buildGenerateLink({ name, stickers, img, pid, size, tag }) {
+    const base = getShareBase();
     const list = Array.isArray(stickers) ? stickers : (stickers ? [stickers] : []);
     const normalized = list.map(normalizeStickerUrl);
-    const stickersParam = normalized.join(',');
+    // Compress sticker URLs to path when same host to shorten k=
+    const host = (() => { try { return new URL(base).host; } catch { return ''; } })();
+    const shortStickers = normalized.map((u) => {
+        try {
+            const url = new URL(u, base);
+            return url.host === host ? url.pathname : u;
+        } catch {
+            return u;
+        }
+    });
+    const k = shortStickers.join(',');
     const v = Date.now().toString(36);
-    const sizeParam = size ? `&size=${encodeURIComponent(size)}` : '';
-    const tagParam = tag ? `&tag=${encodeURIComponent(tag)}` : '';
-    return `${base}/api/generate?name=${encodeURIComponent(name || '')}&stickers=${encodeURIComponent(stickersParam)}&img=${encodeURIComponent(img || '')}${sizeParam}${tagParam}&v=${v}`;
+    const nParam = name ? `n=${encodeURIComponent(name)}` : '';
+    const kParam = k ? `&k=${encodeURIComponent(k)}` : '';
+    const sizeParam = size ? `&s=${encodeURIComponent(size)}` : '';
+    const tagParam = tag ? `&t=${encodeURIComponent(tag)}` : '';
+    const imgParam = pid ? `&pid=${encodeURIComponent(pid)}` : (img ? `&i=${encodeURIComponent(img)}` : '');
+    return `${base}/api/generate?${nParam}${kParam}${imgParam}${sizeParam}${tagParam}&v=${v}`;
 }
 
 // Helpers to optionally use Facebook Share Dialog (adds quote/hashtag) or fallback to sharer
@@ -84,12 +97,13 @@ function openFacebookShare(url, opts = {}) {
 }
 
 // Hàm tiện ích bạn gọi sau khi đã có URL ảnh Cloudinary (secure_url)
-window.createAndOpenShareLink = function ({ canvas, cloudinaryUrl, name, size, selectedStickers }) {
+window.createAndOpenShareLink = function ({ canvas, cloudinaryUrl, cloudinaryPublicId, name, size, selectedStickers }) {
   try {
         const link = buildGenerateLink({
             name,
             stickers: selectedStickers || window.selectedStickers || [],
             img: cloudinaryUrl,
+            pid: cloudinaryPublicId,
             size,
             tag: window.chosenTagline || ''
         });
@@ -283,9 +297,10 @@ btnNext.onclick = function() {
             // Start pre-upload in background with loading overlay and measure server time
             const overlay = showLoading('Đang tạo ảnh để chia sẻ…');
             const stickersNow = window.selectedStickers || [];
-            preUploadCard(name, stickersNow, '1-1')
-              .then(({ url, durationMs }) => {
-                  window.lastUploadedUrl = url;
+                        preUploadCard(name, stickersNow, '1-1')
+                            .then(({ url, publicId, durationMs }) => {
+                                    window.lastUploadedUrl = url;
+                                    window.lastUploadedPublicId = publicId;
                   const s = (durationMs / 1000).toFixed(1);
                   hideLoading(`Đã tạo xong trong ${s}s`);
               })
@@ -726,11 +741,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
                 const data = await res.json();
 
-                if (res.ok && data.secure_url) {
+        if (res.ok && data.secure_url) {
                     const name = document.querySelector('.input-field')?.value || 'Bạn';
                     window.createAndOpenShareLink({
                         canvas,
-                        cloudinaryUrl: data.secure_url,
+            cloudinaryUrl: data.secure_url,
+            cloudinaryPublicId: data.public_id,
                         name,
                         size: currentSection?.classList.contains('size-9-16') || currentSection?.classList.contains('mn-hinh-hin-ra-chia-se-9-16') ? '9-16' : '1-1',
                         selectedStickers: window.selectedStickers || []
