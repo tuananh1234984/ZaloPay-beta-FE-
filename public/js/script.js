@@ -599,7 +599,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Wire retry menu items (2nd item in each menu)
     document.querySelectorAll('.kt-qu-phin-bn-mi .menu .menu-item:nth-child(2), .size .menu .menu-item:nth-child(2), .size-9-16 .menu .menu-item:nth-child(2)')
-      .forEach(btn => btn.addEventListener('click', () => softReset('intro')));
+        .forEach(btn => btn.addEventListener('click', () => softReset('intro')));
 });
 
 document.addEventListener("DOMContentLoaded", () => {

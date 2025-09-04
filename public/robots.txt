@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Explicitly allow Facebook crawler
+User-agent: facebookexternalhit/1.1
+Allow: /
+
+Sitemap: https://zalo-pay-beta-fe.vercel.app/sitemap.xml

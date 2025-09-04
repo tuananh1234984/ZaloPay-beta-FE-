@@ -71,6 +71,7 @@ module.exports = function handler(req, res) {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <title>Kết quả ZaloPay</title>
                 <meta property="og:type" content="website" />
+                <meta property="og:site_name" content="ZaloPay" />
                 <meta property="og:title" content="${name || "Bạn"} - Phiên bản mới ZaloPay" />
                 <meta property="og:description" content="Phiên bản này quá đã. Bạn đã đập hộp chưa?" />
                 <meta property="og:image" content="${imageUrl}" />
@@ -80,6 +81,7 @@ module.exports = function handler(req, res) {
                 <meta property="og:url" content="${canonicalUrl}" />
                 <meta property="twitter:card" content="summary_large_image" />
                 <meta property="twitter:image" content="${imageUrl}" />
+                <meta name="robots" content="index, follow" />
                 <link rel="preload" as="image" href="/assets/img/Vector-2.png" />
                 <link rel="stylesheet" href="/css/styleguile.css" />
                 ${sizeStyle}
