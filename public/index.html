@@ -16,6 +16,18 @@
     <!-- <meta property="fb:app_id" content="YOUR_FB_APP_ID" /> -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content="https://zalo-pay-beta-fe.vercel.app/assets/img/ZZ.png">
+    
+    <!-- Resource Hints: speed up third-party connections -->
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="dns-prefetch" href="//res.cloudinary.com">
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+
+    <!-- Preload likely LCP/critical images for first screen -->
+    <link rel="preload" as="image" href="/assets/img/Artboard%201%206.png" fetchpriority="high">
+    <link rel="preload" as="image" href="/assets/img/Asset-15.png">
+    <link rel="preload" as="image" href="/assets/img/Vector.png">
+    <link rel="preload" as="image" href="/assets/img/Layer_1.png">
     <link rel="stylesheet" href="./css/styleguile.css">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/global.css">
@@ -38,8 +50,8 @@
                             <div class="text-wrapper">MỞ GIỚI HẠN</div>
                             <div class="rectangle"></div>
                             <div class="p-h-p">ĐẬP<br/>HỘP</div>
-                            <img class="asset" src="./assets/img/Asset-15.png"/>
-                            <img class="artboard" src="./assets/img/Artboard 1 6.png"/>
+                            <img class="asset" src="./assets/img/Asset-15.png" decoding="async"/>
+                            <img class="artboard" src="./assets/img/Artboard 1 6.png" fetchpriority="high" decoding="async"/>
                         </div>
                         <img class="vector" src="./assets/img/Vector.png"/>
                     </div>
