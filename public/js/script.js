@@ -166,49 +166,48 @@ btnPlay.onclick = function() {
     }, 500);
 };
 
-// ---------- Loading overlay + pre-upload helpers ----------
-function ensureLoadingOverlay() {
-    let overlay = document.getElementById('loading-overlay');
-    if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.id = 'loading-overlay';
-        overlay.style.cssText = [
-            'position:fixed', 'inset:0', 'display:none', 'align-items:center', 'justify-content:center',
-            'background:rgba(255,255,255,0.8)', 'z-index:9999', 'font-family: Aeonik, Helvetica, Arial, sans-serif',
-            'color:#0033c9', 'text-align:center', 'user-select:none', 'pointer-events:none'
-        ].join(';');
-        const box = document.createElement('div');
-        box.style.cssText = 'background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 8px 30px rgba(0,0,0,.12)';
-        box.innerHTML = '<div style="font-weight:700;font-size:18px">Đang tạo ảnh…</div><div id="loading-elapsed" style="margin-top:6px;font-size:14px;color:#666">0.0s</div>';
-        overlay.appendChild(box);
-        document.body.appendChild(overlay);
+// ---------- Loading UI sync with slide 3 (no extra overlay) ----------
+function showLoading(initialText = 'Đang tạo ảnh để chia sẻ…') {
+    // Use slide 3 text as loading label and sync timer to server upload start
+    const sec3 = sections[3];
+    if (!sec3) return null;
+    const label = sec3.querySelector('.ang-c-p-nh-t-phi-n-b');
+    if (label) {
+        if (!label.dataset.originalText) label.dataset.originalText = label.textContent || '';
+        label.textContent = initialText;
     }
-    return overlay;
-}
-
-function showLoading(initialText = 'Đang xử lý…') {
-    const overlay = ensureLoadingOverlay();
-    overlay.querySelector('div > div')?.insertAdjacentText ? (overlay.querySelector('div > div').textContent = initialText) : null;
-    overlay.style.display = 'flex';
-    overlay.dataset.start = String(performance.now());
-    const elapsedEl = overlay.querySelector('#loading-elapsed');
-    overlay._timer && clearInterval(overlay._timer);
-    overlay._timer = setInterval(() => {
-        const start = Number(overlay.dataset.start || '0');
-        const s = Math.max(0, performance.now() - start) / 1000;
-        if (elapsedEl) elapsedEl.textContent = s.toFixed(1) + 's';
-    }, 100);
-    return overlay;
+    // Prepare a hook that starts counting exactly when upload begins
+    if (window.__uploadTimer && window.__uploadTimer.id) {
+        clearInterval(window.__uploadTimer.id);
+    }
+    window.__uploadTimer = { id: null, start: 0, label };
+    window.__onUploadStart = () => {
+        const timer = window.__uploadTimer;
+        if (!timer) return;
+        timer.start = performance.now();
+        if (timer.id) clearInterval(timer.id);
+        timer.id = setInterval(() => {
+            const s = Math.max(0, performance.now() - timer.start) / 1000;
+            if (timer.label) timer.label.textContent = `${initialText} (${s.toFixed(1)}s)`;
+        }, 100);
+    };
+    return sec3;
 }
 
 function hideLoading(finalText) {
-    const overlay = ensureLoadingOverlay();
+    const sec3 = sections[3];
+    if (!sec3) return;
+    const timer = window.__uploadTimer;
+    if (timer && timer.id) clearInterval(timer.id);
     if (finalText) {
-        const title = overlay.querySelector('div > div');
-        if (title) title.textContent = finalText;
+        const label = sec3.querySelector('.ang-c-p-nh-t-phi-n-b');
+        if (label) label.textContent = finalText;
+    } else {
+        const label = sec3.querySelector('.ang-c-p-nh-t-phi-n-b');
+        if (label && label.dataset.originalText) label.textContent = label.dataset.originalText;
     }
-    const t = overlay._timer; if (t) clearInterval(t);
-    setTimeout(() => { overlay.style.display = 'none'; }, 300);
+    window.__onUploadStart = null;
+    window.__uploadTimer = null;
 }
 
 async function preUploadCard(name, stickers, size = '1-1') {
@@ -246,6 +245,10 @@ async function preUploadCard(name, stickers, size = '1-1') {
         const canvas = await html2canvas(target, { useCORS: true, allowTaint: true, scale: 2, backgroundColor: '#ffffff' });
         const dataURL = canvas.toDataURL('image/png');
         if (dataURL === 'data:,') throw new Error('canvas trống');
+        // Signal that server upload is starting so the UI timer reflects server time only
+        if (typeof window.__onUploadStart === 'function') {
+            try { window.__onUploadStart(); } catch {}
+        }
         const t0 = performance.now();
     const res = await fetch('/api/upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataUrl: dataURL, folder: 'zalopay-shares', tags: 'zalopay,preupload' }) });
     const json = await res.json();
@@ -294,18 +297,6 @@ btnNext.onclick = function() {
             const box = sections[3].querySelector(".rectangle-2");
             const nameDisplay = sections[3].querySelector(".text-wrapper-3");
             nameDisplay.textContent = name;
-
-            // Start pre-upload in background with loading overlay and measure server time
-            const overlay = showLoading('Đang tạo ảnh để chia sẻ…');
-            const stickersNow = window.selectedStickers || [];
-                        preUploadCard(name, stickersNow, '1-1')
-                            .then(({ url, publicId, durationMs }) => {
-                                    window.lastUploadedUrl = url;
-                                    window.lastUploadedPublicId = publicId;
-                  const s = (durationMs / 1000).toFixed(1);
-                  hideLoading(`Đã tạo xong trong ${s}s`);
-              })
-              .catch(() => hideLoading());
 
             setTimeout(() => {
                 hammer.classList.add('shake-hammer');
