@@ -1,6 +1,13 @@
 module.exports = function handler(req, res) {
-    // Accept params from query string (match final-web-1 behavior)
-    const { name = "", size = "1-1", image, img, stickers = "", tag = "", phrase = "" } = req.query;
+    // Accept params from query string with short aliases
+    const q = req.query || {};
+    const name = (q.name ?? q.n ?? "");
+    const size = (q.size ?? q.s ?? "1-1");
+    const image = (q.image ?? q.img ?? q.i);
+    const stickers = (q.stickers ?? q.k ?? "");
+    const tag = (q.tag ?? q.t ?? "");
+    const phrase = (q.phrase ?? q.p ?? "");
+    const pid = (q.pid ?? q.public_id);
 
     // Default OG image
     const defaultImage =
@@ -8,8 +15,10 @@ module.exports = function handler(req, res) {
             ? "https://res.cloudinary.com/den7ju8t4/image/upload/v123456789/og-9-16.png"
             : "https://res.cloudinary.com/den7ju8t4/image/upload/v123456789/og-1-1.png";
 
-    // Image used by Facebook/Twitter preview
-    const imageUrl = image || img || defaultImage;
+    // Image used by Facebook/Twitter preview (prefer direct URL, else build from pid)
+    const CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME || 'den7ju8t4';
+    const imageFromPid = pid ? `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${pid}` : undefined;
+    const imageUrl = image || imageFromPid || defaultImage;
 
     // Stickers list (optional), fallback to local icons for body mock
     const stickerList = String(stickers)
