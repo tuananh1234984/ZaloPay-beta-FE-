@@ -40,42 +40,64 @@ module.exports = async function handler(req, res) {
     const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
     const apiKey = process.env.CLOUDINARY_API_KEY;
     const apiSecret = process.env.CLOUDINARY_API_SECRET;
+    const unsignedPreset = process.env.CLOUDINARY_UPLOAD_PRESET || 'zalopay_unsigned';
 
-    if (!cloudName || !apiKey || !apiSecret) {
-      res.status(500).json({ error: 'Cloudinary env missing' });
+    if (!cloudName) {
+      res.status(500).json({ error: 'Cloudinary env missing', details: 'CLOUDINARY_CLOUD_NAME is required' });
       return;
     }
 
-    const timestamp = Math.floor(Date.now() / 1000);
-    const params = {
-      folder,
-      timestamp,
-    };
-    if (publicId) params.public_id = publicId;
-    if (tags) params.tags = tags;
-
-    const signature = buildSignature(params, apiSecret);
-
     const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
-    // Use global FormData available in Node 18+
+    // If signed credentials exist, prefer signed upload (more control/quota)
+    if (apiKey && apiSecret) {
+      const timestamp = Math.floor(Date.now() / 1000);
+      const params = { folder, timestamp };
+      if (publicId) params.public_id = publicId;
+      if (tags) params.tags = tags;
+
+      const signature = buildSignature(params, apiSecret);
+
+      const form = new (globalThis.FormData || require('form-data'))();
+      form.append('file', dataUrl);
+      form.append('api_key', apiKey);
+      form.append('timestamp', timestamp.toString());
+      form.append('signature', signature);
+      if (folder) form.append('folder', folder);
+      if (publicId) form.append('public_id', publicId);
+      if (tags) form.append('tags', tags);
+
+      const resp = await fetch(url, { method: 'POST', body: form });
+      const json = await resp.json();
+      if (!resp.ok) {
+        res.status(resp.status).json({ error: 'cloudinary_error', details: json });
+        return;
+      }
+      res.status(200).json({
+        secure_url: json.secure_url,
+        public_id: json.public_id,
+        width: json.width,
+        height: json.height,
+        bytes: json.bytes,
+        format: json.format,
+      });
+      return;
+    }
+
+    // Fallback: unsigned upload when signing secrets are not configured
     const form = new (globalThis.FormData || require('form-data'))();
     form.append('file', dataUrl);
-    form.append('api_key', apiKey);
-    form.append('timestamp', timestamp.toString());
-    form.append('signature', signature);
+    form.append('upload_preset', unsignedPreset);
     if (folder) form.append('folder', folder);
     if (publicId) form.append('public_id', publicId);
     if (tags) form.append('tags', tags);
 
     const resp = await fetch(url, { method: 'POST', body: form });
     const json = await resp.json();
-
     if (!resp.ok) {
       res.status(resp.status).json({ error: 'cloudinary_error', details: json });
       return;
     }
-
     res.status(200).json({
       secure_url: json.secure_url,
       public_id: json.public_id,
