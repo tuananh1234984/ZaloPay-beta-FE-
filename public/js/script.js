@@ -99,11 +99,12 @@ function openFacebookShare(url, opts = {}) {
 // Hàm tiện ích bạn gọi sau khi đã có URL ảnh Cloudinary (secure_url)
 window.createAndOpenShareLink = function ({ canvas, cloudinaryUrl, cloudinaryPublicId, name, size, selectedStickers }) {
   try {
+        const pidToUse = cloudinaryPublicId || window.lastUploadedPublicId || undefined;
         const link = buildGenerateLink({
             name,
             stickers: selectedStickers || window.selectedStickers || [],
             img: cloudinaryUrl,
-            pid: cloudinaryPublicId,
+            pid: pidToUse,
             size,
             tag: window.chosenTagline || ''
         });
@@ -246,11 +247,11 @@ async function preUploadCard(name, stickers, size = '1-1') {
         const dataURL = canvas.toDataURL('image/png');
         if (dataURL === 'data:,') throw new Error('canvas trống');
         const t0 = performance.now();
-        const res = await fetch('/api/upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataUrl: dataURL, folder: 'zalopay-shares', tags: 'zalopay,preupload' }) });
-        const json = await res.json();
+    const res = await fetch('/api/upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataUrl: dataURL, folder: 'zalopay-shares', tags: 'zalopay,preupload' }) });
+    const json = await res.json();
         const dt = performance.now() - t0;
         if (!res.ok || !json.secure_url) throw new Error('upload failed');
-        return { url: json.secure_url, durationMs: dt };
+    return { url: json.secure_url, publicId: json.public_id, durationMs: dt };
     } finally {
         host.remove();
     }

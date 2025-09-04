@@ -58,8 +58,9 @@ module.exports = function handler(req, res) {
     const noName = !name || String(name).trim() === '';
     const noTag = !tag && !phrase;
     const noStickers = stickerList.length === 0;
-    const noCustomImage = !image && !img; // og default still exists but not a custom generated image
-    const isEmptyState = forceEmpty || (noName && noTag && noStickers && noCustomImage);
+    // Consider we have a custom image if direct image URL is provided or it can be derived from pid
+    const hasCustomImage = Boolean((image && String(image).trim()) || imageFromPid);
+    const isEmptyState = forceEmpty || (noName && noTag && noStickers && !hasCustomImage);
     // Build a retry URL that removes empty/state flags but keeps other params
     const retryUrl = (() => {
         try {
