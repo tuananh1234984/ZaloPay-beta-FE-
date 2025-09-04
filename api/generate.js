@@ -19,6 +19,7 @@ module.exports = function handler(req, res) {
     const CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME || 'den7ju8t4';
     const imageFromPid = pid ? `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${pid}` : undefined;
     const imageUrl = image || imageFromPid || defaultImage;
+    const FB_APP_ID = process.env.FB_APP_ID || process.env.NEXT_PUBLIC_FB_APP_ID || '';
 
     // Stickers list (optional), fallback to local icons for body mock
     const stickerList = String(stickers)
@@ -82,6 +83,7 @@ module.exports = function handler(req, res) {
                 <title>Kết quả ZaloPay</title>
                 <meta property="og:type" content="website" />
                 <meta property="og:site_name" content="ZaloPay" />
+                ${FB_APP_ID ? `<meta property="fb:app_id" content="${FB_APP_ID}" />` : ''}
                 <meta property="og:title" content="${name || "Bạn"} - Phiên bản mới ZaloPay" />
                 <meta property="og:description" content="Phiên bản này quá đã. Bạn đã đập hộp chưa?" />
                 <meta property="og:image" content="${imageUrl}" />
