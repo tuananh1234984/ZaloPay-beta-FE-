@@ -1,0 +1,12 @@
+{
+  "name": "zalopay-local-mock",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start:mock": "set MOCK_UPLOAD=1&& node test\\mock-server.js",
+    "start": "node test\\mock-server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
