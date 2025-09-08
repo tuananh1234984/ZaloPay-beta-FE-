@@ -312,43 +312,7 @@ btnNext.onclick = function() {
                             sections[4].classList.add('fade-in-up');
 
                             // Cập nhật tên và sticker đã chọn trong kết quả
-                                    renderResult(name, selectedStickers);
-
-                                    // --- Auto capture + upload flow (client renders image, POSTS to /api/upload, then open /api/generate) ---
-                                    (async () => {
-                                        try {
-                                            // Show loading UI (will start timer when upload starts)
-                                            showLoading('Đang tạo ảnh để chia sẻ…');
-
-                                            // Use currentSize if set elsewhere, default to 1-1
-                                            const sizeToUse = window.currentSize || '1-1';
-
-                                            // preUploadCard will capture an off-screen render and perform the /api/upload call
-                                            const result = await preUploadCard(name, selectedStickers, sizeToUse);
-                                            if (!result || !result.publicId) throw new Error('Upload did not return publicId');
-
-                                            // Store for other UI helpers
-                                            window.lastUploadedUrl = result.url;
-                                            window.lastUploadedPublicId = result.publicId;
-
-                                            // Hide loading and redirect to the public OG generator page using returned publicId
-                                            hideLoading();
-                                            const genLink = buildGenerateLink({
-                                                name,
-                                                stickers: selectedStickers,
-                                                pid: result.publicId,
-                                                size: sizeToUse,
-                                                img: result.url,
-                                            });
-                                            // Navigate to the OG page so social preview services see the public image/meta
-                                            window.location.href = genLink;
-                                        } catch (err) {
-                                            hideLoading();
-                                            console.error('Auto upload/redirect failed:', err);
-                                            // Keep user on result screen and show error slide optionally
-                                            showErrorSlide();
-                                        }
-                                    })();
+                            renderResult(name, selectedStickers);
                         }, 500);
                     }, 2000);
                 }, 300);
